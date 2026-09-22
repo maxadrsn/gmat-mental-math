@@ -1,5 +1,5 @@
 // Bump VERSION on every change so installed apps pick up the new files.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = 'gmm-' + VERSION;
 const PRECACHE = ['/', '/index.html', '/manifest.webmanifest', '/favicon.png',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];

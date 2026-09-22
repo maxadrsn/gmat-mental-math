@@ -72,25 +72,54 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.
 .note{font-size:13px;color:var(--ink-2);background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin-bottom:16px}
 
 /* setup */
-.setup{display:grid;gap:22px}
-.block h2{font-size:17px;font-weight:600;margin-bottom:10px;font-family:var(--body);letter-spacing:0}
-.groups{display:grid;gap:14px}
-.grp-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-size:12.5px;font-weight:600}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;display:inline-flex;gap:8px;align-items:center}
-.chip small{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
-.chip[aria-pressed="true"] small{color:var(--ink-2)}
+.setup{display:grid;gap:34px}
+.step-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.step-head h2{font-size:21px;font-weight:600;margin:0 0 2px}
+.step-head p{margin:0;color:var(--ink-2);font-size:14px;max-width:62ch}
+.step-n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font:600 14px/28px var(--body);text-align:center;margin-top:1px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.preset{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:13.5px}
+.preset[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ghead{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);cursor:pointer}
+.ghead b{font-weight:600;flex:1}
+.ghead span{font-size:12.5px;color:var(--muted)}
+.topic{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:start;padding:10px 14px;border-top:1px solid var(--grid);cursor:pointer}
+.topic:first-of-type{border-top:0}
+.topic:hover{background:var(--surface-2)}
+.topic input,.ghead input{width:17px;height:17px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
+.tname{font-weight:500;font-size:14.5px}
+.tdesc{grid-column:2/4;font-size:12.5px;color:var(--ink-2)}
+.tex{grid-column:2/4;font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--surface-2);border-radius:6px;padding:3px 8px;justify-self:start;margin-top:3px}
+.tex .fr{font-size:.92em}
+.tacc{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.opts3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.opt{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:4px}
+.opt b{font-size:15.5px;font-weight:600}
+.opt span{font-size:13px;color:var(--ink-2)}
+.opt code{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.lenmode{margin-bottom:10px}
+.lenvals{display:flex;gap:8px;flex-wrap:wrap}
+.lenvals button{min-width:84px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;font:600 15px var(--mono)}
+.lenvals button small{display:block;font:400 11.5px var(--body);color:var(--muted)}
+.lenvals button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.startbar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px -12px rgba(0,0,0,.25)}
+.summary{font-size:14px;color:var(--ink-2)}
+.summary b{color:var(--ink);font-weight:600}
+.warnline{color:var(--bad)}
 .seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:none;padding:8px 14px;font-size:13.5px;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
 .hint{font-size:12.5px;color:var(--muted);margin-top:6px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 22px;font-weight:600;font-size:15px}
 .primary:disabled{opacity:.45;cursor:not-allowed}
 .ghost{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-weight:500}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-size:12.5px;font-weight:600}
+.qsub{font:400 13.5px/1.4 var(--body);color:var(--ink-2);margin-top:10px}
 
 /* run */
 .runbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13.5px;color:var(--ink-2)}
@@ -176,6 +205,8 @@ sup{font-size:.6em;vertical-align:.8em;line-height:0}
 svg text{fill:var(--muted);font:11px var(--mono)}
 .danger{color:var(--bad);border-color:var(--bad)}
 @media (max-width:620px){
+  .groups,.opts3{grid-template-columns:1fr}
+  .startbar{flex-direction:column;align-items:stretch}
   .tiles{grid-template-columns:repeat(2,1fr)}
   .tagrow{grid-template-columns:1fr}
   .tagrow .desc{grid-column:1}
@@ -209,34 +240,23 @@ img{max-width:100%}
   <!-- TRAIN -->
   <section id="viewTrain">
     <div id="setup" class="setup">
-      <div class="block">
-        <div class="row" style="justify-content:space-between;margin-bottom:10px">
-          <h2 style="margin:0">What to drill</h2>
-          <div class="row">
-            <button class="linkbtn" id="selAll">All</button>
-            <button class="linkbtn" id="selNone">Clear</button>
-          </div>
-        </div>
+      <section class="step">
+        <div class="step-head"><span class="step-n">1</span><div><h2>Pick your topics</h2><p>Tick what you want mixed into the session. The example shows the kind of question you'll get.</p></div></div>
+        <div class="presets" id="presets"></div>
         <div class="groups" id="groups"></div>
-      </div>
-      <div class="block">
-        <h2>Difficulty</h2>
-        <div class="seg" id="lvlSeg">
-          <button data-v="1">Easy</button><button data-v="2">Medium</button><button data-v="3">Hard</button>
-        </div>
-        <div class="hint" id="lvlHint"></div>
-      </div>
-      <div class="block">
-        <h2>Length</h2>
-        <div class="seg" id="lenSeg">
-          <button data-v="q10">10 questions</button><button data-v="q20">20</button><button data-v="q30">30</button><button data-v="q50">50</button>
-          <button data-v="t2">2 min</button><button data-v="t5">5 min</button><button data-v="t10">10 min</button>
-        </div>
-        <div class="hint">A day counts toward your streak once you finish a session of at least 5 questions.</div>
-      </div>
-      <div class="row">
-        <button class="primary" id="startBtn">Start session</button>
-        <button class="ghost" id="weakBtn" hidden>Drill my weak spots</button>
+      </section>
+      <section class="step">
+        <div class="step-head"><span class="step-n">2</span><div><h2>Choose a difficulty</h2><p>It sets the size of the numbers and how many steps each question takes.</p></div></div>
+        <div class="opts3" id="lvlOpts" role="radiogroup" aria-label="Difficulty"></div>
+      </section>
+      <section class="step">
+        <div class="step-head"><span class="step-n">3</span><div><h2>Set the length</h2><p>A day counts for your streak once you finish a session of at least 5 questions.</p></div></div>
+        <div class="lenmode seg" id="modeSeg"><button data-m="q">Fixed number of questions</button><button data-m="t">Against the clock</button></div>
+        <div class="lenvals" id="lenVals"></div>
+      </section>
+      <div class="startbar">
+        <div class="summary" id="summary"></div>
+        <button class="primary" id="startBtn">Start</button>
       </div>
     </div>
 
@@ -306,25 +326,25 @@ const secs = ms => (ms/1000).toFixed(1)+'s';
 
 /* ---------- categories ---------- */
 const CATS = [
- {id:'add',  g:'Arithmetic', name:'Add & subtract', t:[6,10,15], tip:'Round one number to a friendly value, then compensate: 487 + 296 = 487 + 300 − 4.'},
- {id:'mul',  g:'Arithmetic', name:'Multiplication', t:[8,15,25], tip:'Split into tens and units: 47 × 6 = 240 + 42. For two-digit × two-digit, round the smaller one: 38 × 19 = 38 × 20 − 38.'},
- {id:'div',  g:'Arithmetic', name:'Division', t:[8,15,25], tip:'Turn it into multiplication: 672 ÷ 16 → 16 × ? = 672. Pull out an easy chunk first (16 × 40 = 640), then the rest.'},
- {id:'dec',  g:'Arithmetic', name:'Decimals', t:[10,15,25], tip:'Drop the points, compute with whole numbers, then place the point by counting decimal places. To divide, shift both points until the divisor is whole.'},
- {id:'neg',  g:'Arithmetic', name:'Signs & order of operations', t:[10,20,30], tip:'Powers, then × ÷, then + −. Subtracting a negative is adding. (−3)² = 9 but −3² = −9.'},
- {id:'fadd', g:'Fractions', name:'Add & subtract', t:[15,25,40], tip:'Find the LCD, rescale each numerator, then add the tops only: 2/3 + 3/4 = 8/12 + 9/12 = 17/12.'},
- {id:'fmul', g:'Fractions', name:'Multiply & divide', t:[12,20,30], tip:'Cancel diagonally before multiplying. Dividing = multiplying by the flipped divisor.'},
- {id:'fsimp',g:'Fractions', name:'Simplify', t:[10,15,25], tip:'Find the GCD with divisibility rules (2, 3, 5, 7, 11…) and divide top and bottom. Check again for leftover common factors.'},
- {id:'fcmp', g:'Fractions', name:'Compare', t:[10,15,25], tip:'Cross-multiply: a/b > c/d exactly when a×d > c×b. Or compare both to a benchmark like 1/2 or 3/4.'},
- {id:'fconv',g:'Fractions', name:'Fraction ↔ decimal ↔ %', t:[6,10,15], tip:'Know the unit fractions cold: 1/8 = 0.125, 1/6 ≈ 0.167, 1/7 ≈ 0.143, 1/9 ≈ 0.111, 1/11 ≈ 0.091, 1/12 ≈ 0.083. Then multiply.'},
- {id:'pct',  g:'Percents', name:'Percent of', t:[8,15,25], tip:'Build from 10% and 1%: 35% = 3 × 10% + half of 10%. Or use benchmarks: 12.5% = 1/8, 37.5% = 3/8.'},
- {id:'pchg', g:'Percents', name:'Percent change', t:[12,20,30], tip:'Change ÷ ORIGINAL. Successive changes multiply: +20% then −25% → 1.2 × 0.75 = 0.9 → −10%.'},
- {id:'sq',   g:'Powers & roots', name:'Squares', t:[4,8,15], tip:'Know 1–25² cold. Beyond that: 47² = (50 − 3)² = 2500 − 300 + 9. Ending in 5: 65² → 6 × 7 = 42, append 25 → 4225.'},
- {id:'root', g:'Powers & roots', name:'Square & cube roots', t:[4,8,15], tip:'Bracket between tens (40² = 1600, 50² = 2500), then use the last digit to pick the candidate.'},
- {id:'pow',  g:'Powers & roots', name:'Exponent rules', t:[5,12,20], tip:'Rewrite everything to one base (4 = 2², 27 = 3³). Multiply → add exponents; power of a power → multiply. 2ⁿ + 2ⁿ = 2ⁿ⁺¹.'},
- {id:'gcd',  g:'Number properties', name:'GCD & LCM', t:[12,20,35], tip:'Prime-factorise. GCD: shared primes at the lowest power. LCM: every prime at the highest power. GCD × LCM = a × b.'},
- {id:'prime',g:'Number properties', name:'Prime factorisation', t:[12,20,30], tip:'Divide out the smallest prime repeatedly (2, 3, 5, 7…) until the quotient is prime.'},
- {id:'divis',g:'Number properties', name:'Divisibility', t:[6,10,15], tip:'3 and 9: digit sum. 4: last two digits. 8: last three. 11: alternating digit sum. Composite k: test its coprime parts (12 = 3 × 4).'},
- {id:'nfac', g:'Number properties', name:'Number of factors', t:[15,25,40], tip:'Factorise N = pᵃ · qᵇ · rᶜ, then the count is (a+1)(b+1)(c+1).'},
+ {id:'add',  g:'Arithmetic', name:'Add & subtract', t:[6,10,15], d:'', ex:'487 + 296', tip:'Round one number to a friendly value, then compensate: 487 + 296 = 487 + 300 − 4.'},
+ {id:'mul',  g:'Arithmetic', name:'Multiplication', t:[8,15,25], d:'', ex:'47 × 6', tip:'Split into tens and units: 47 × 6 = 240 + 42. For two-digit × two-digit, round the smaller one: 38 × 19 = 38 × 20 − 38.'},
+ {id:'div',  g:'Arithmetic', name:'Division', t:[8,15,25], d:'', ex:'672 ÷ 16', tip:'Turn it into multiplication: 672 ÷ 16 → 16 × ? = 672. Pull out an easy chunk first (16 × 40 = 640), then the rest.'},
+ {id:'dec',  g:'Arithmetic', name:'Decimals', t:[10,15,25], d:'', ex:'0.06 × 0.5', tip:'Drop the points, compute with whole numbers, then place the point by counting decimal places. To divide, shift both points until the divisor is whole.'},
+ {id:'neg',  g:'Arithmetic', name:'Signs & order of operations', t:[10,20,30], d:'Negative numbers and which operation comes first.', ex:'−3 × (4 − 9) + 6', tip:'Powers, then × ÷, then + −. Subtracting a negative is adding. (−3)² = 9 but −3² = −9.'},
+ {id:'fadd', g:'Fractions', name:'Add & subtract', t:[15,25,40], d:'', ex:'[2/3] + [3/4]', tip:'Find the LCD, rescale each numerator, then add the tops only: 2/3 + 3/4 = 8/12 + 9/12 = 17/12.'},
+ {id:'fmul', g:'Fractions', name:'Multiply & divide', t:[12,20,30], d:'', ex:'[5/6] ÷ [10/9]', tip:'Cancel diagonally before multiplying. Dividing = multiplying by the flipped divisor.'},
+ {id:'fsimp',g:'Fractions', name:'Simplify', t:[10,15,25], d:'Reduce to lowest terms.', ex:'[84/126] → [2/3]', tip:'Find the GCD with divisibility rules (2, 3, 5, 7, 11…) and divide top and bottom. Check again for leftover common factors.'},
+ {id:'fcmp', g:'Fractions', name:'Compare', t:[10,15,25], d:'Pick the bigger fraction.', ex:'[7/9] or [9/11]?', tip:'Cross-multiply: a/b > c/d exactly when a×d > c×b. Or compare both to a benchmark like 1/2 or 3/4.'},
+ {id:'fconv',g:'Fractions', name:'Fraction ↔ decimal ↔ %', t:[6,10,15], d:'Switch between the three forms.', ex:'[3/8] = 0.375 = 37.5%', tip:'Know the unit fractions cold: 1/8 = 0.125, 1/6 ≈ 0.167, 1/7 ≈ 0.143, 1/9 ≈ 0.111, 1/11 ≈ 0.091, 1/12 ≈ 0.083. Then multiply.'},
+ {id:'pct',  g:'Percents', name:'Percent of', t:[8,15,25], d:'', ex:'35% of 240', tip:'Build from 10% and 1%: 35% = 3 × 10% + half of 10%. Or use benchmarks: 12.5% = 1/8, 37.5% = 3/8.'},
+ {id:'pchg', g:'Percents', name:'Percent change', t:[12,20,30], d:'Increase or decrease, in %.', ex:'80 → 100 = +25%', tip:'Change ÷ ORIGINAL. Successive changes multiply: +20% then −25% → 1.2 × 0.75 = 0.9 → −10%.'},
+ {id:'sq',   g:'Powers & roots', name:'Squares', t:[4,8,15], d:'', ex:'47^{2}', tip:'Know 1–25² cold. Beyond that: 47² = (50 − 3)² = 2500 − 300 + 9. Ending in 5: 65² → 6 × 7 = 42, append 25 → 4225.'},
+ {id:'root', g:'Powers & roots', name:'Square & cube roots', t:[4,8,15], d:'', ex:'√2025 · ∛343', tip:'Bracket between tens (40² = 1600, 50² = 2500), then use the last digit to pick the candidate.'},
+ {id:'pow',  g:'Powers & roots', name:'Exponent rules', t:[5,12,20], d:'Combine powers of the same base.', ex:'4^{3} × 8^{2} = 2^{?}', tip:'Rewrite everything to one base (4 = 2², 27 = 3³). Multiply → add exponents; power of a power → multiply. 2ⁿ + 2ⁿ = 2ⁿ⁺¹.'},
+ {id:'gcd',  g:'Number properties', name:'GCD & LCM', t:[12,20,35], d:'GCD: biggest number that divides both. LCM: smallest number both divide into.', ex:'GCD(12, 18) = 6 · LCM(4, 6) = 12', tip:'Prime-factorise. GCD: shared primes at the lowest power. LCM: every prime at the highest power. GCD × LCM = a × b.'},
+ {id:'prime',g:'Number properties', name:'Prime factorisation', t:[12,20,30], d:'Write a number as a product of primes.', ex:'360 = 2^{3} · 3^{2} · 5', tip:'Divide out the smallest prime repeatedly (2, 3, 5, 7…) until the quotient is prime.'},
+ {id:'divis',g:'Number properties', name:'Divisibility', t:[6,10,15], d:'Yes/no, using the quick divisibility rules.', ex:'Is 7392 divisible by 11?', tip:'3 and 9: digit sum. 4: last two digits. 8: last three. 11: alternating digit sum. Composite k: test its coprime parts (12 = 3 × 4).'},
+ {id:'nfac', g:'Number properties', name:'Number of factors', t:[15,25,40], d:'Count every whole number that divides N.', ex:'72 has 12 factors', tip:'Factorise N = pᵃ · qᵇ · rᶜ, then the count is (a+1)(b+1)(c+1).'},
 ];
 const CAT = Object.fromEntries(CATS.map(c=>[c.id,c]));
 const GROUPS = [...new Set(CATS.map(c=>c.g))];
@@ -588,7 +608,7 @@ G.gcd = L => {
   const which=pick(['GCD','LCM']);
   const G_=nums.reduce(gcd), L_=nums.reduce(lcm), P=nums.reduce((a,b)=>a*b,1);
   const traps=[{v:which==='GCD'?L_:G_, tag:'GCD / LCM mix-up'}]; if(which==='LCM'&&P!==L_) traps.push({v:P,tag:'Multiplied instead of LCM'});
-  return {prompt:`${which}(${nums.join(', ')})`, kind:'num', ans:which==='GCD'?G_:L_, method:gcdLcmMethod(nums,which), traps};
+  return {prompt:`${which}(${nums.join(', ')})`, sub: which==='GCD'?'Greatest common divisor: the biggest number that divides all of them':'Least common multiple: the smallest number all of them divide into', kind:'num', ans:which==='GCD'?G_:L_, method:gcdLcmMethod(nums,which), traps};
 };
 G.prime = L => {
   const [lo,hi,ps] = L===1?[12,100,[2,3,5,7]]:L===2?[100,1000,[2,3,5,7,11,13]]:[1000,10000,[2,3,5,7,11,13,17,19,23]];
@@ -736,36 +756,50 @@ function renderStreak(){
 }
 
 /* ---------- settings ---------- */
-const settings = Object.assign({cats:CATS.filter(c=>c.g==='Fractions').map(c=>c.id), lvl:2, len:'q20'}, lsGet(LS_SET)||{});
+const settings = Object.assign({cats:CATS.filter(c=>c.g==='Fractions'||c.g==='Percents').map(c=>c.id), lvl:2, len:'q20'}, lsGet(LS_SET)||{});
 settings.cats = settings.cats.filter(id=>CAT[id]);
 const saveSettings = () => lsSet(LS_SET, settings);
 
 function catAcc(id){ const c=P.cats[id]; if(!c||!c.recent||!c.recent.length) return null; return Math.round(100*c.recent.reduce((a,r)=>a+r[0],0)/c.recent.length); }
+const LVL_EX = ['','47 × 6 · [2/3] + [1/6]','38 × 19 · [7/12] − [3/8]','92 × 41 · three fractions at once'];
+const PRESETS = [
+  {id:'fr', label:'Fractions & percents', ids:()=>CATS.filter(c=>c.g==='Fractions'||c.g==='Percents').map(c=>c.id)},
+  {id:'all', label:'Everything', ids:()=>CATS.map(c=>c.id)},
+  {id:'weak', label:'My weak spots', ids:()=>recommendations().map(r=>r.id), show:()=>recommendations().length>0},
+  {id:'none', label:'Clear all', ids:()=>[]},
+];
+const sameSet=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
 function renderSetup(){
+  $('#presets').innerHTML = PRESETS.filter(p=>!p.show||p.show()).map(p=>`<button class="preset" data-preset="${p.id}" aria-pressed="${p.id!=='none'&&settings.cats.length>0&&sameSet(p.ids(),settings.cats)}">${p.label}</button>`).join('');
   $('#groups').innerHTML = GROUPS.map(g=>{
-    const cs=CATS.filter(c=>c.g===g);
-    return `<div><div class="grp-head"><span class="label">${g}</span><button class="linkbtn" data-grp="${g}">${cs.every(c=>settings.cats.includes(c.id))?'Clear group':'Select group'}</button></div>
-      <div class="chips">${cs.map(c=>{ const a=catAcc(c.id); return `<button class="chip" data-cat="${c.id}" aria-pressed="${settings.cats.includes(c.id)}">${c.name}${a!==null?`<small>${a}%</small>`:''}</button>`; }).join('')}</div></div>`;
+    const cs=CATS.filter(c=>c.g===g), on=cs.filter(c=>settings.cats.includes(c.id)).length;
+    return `<div class="group"><label class="ghead"><input type="checkbox" id="g-${g.replace(/\W/g,'')}" data-grp="${g}" ${on===cs.length?'checked':''}><b>${g}</b><span>${on}/${cs.length}</span></label>
+      ${cs.map(c=>{ const a=catAcc(c.id); return `<label class="topic"><input type="checkbox" id="t-${c.id}" data-cat="${c.id}" ${settings.cats.includes(c.id)?'checked':''}>
+        <span class="tname">${c.name}</span><span class="tacc">${a!==null?a+'% right':''}</span>
+        ${c.d?`<span class="tdesc">${esc(c.d)}</span>`:''}<span class="tex">${fmt(c.ex)}</span></label>`; }).join('')}</div>`;
   }).join('');
-  document.querySelectorAll('#lvlSeg button').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===settings.lvl));
-  document.querySelectorAll('#lenSeg button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===settings.len));
-  $('#lvlHint').textContent = LVL_HINT[settings.lvl];
-  $('#startBtn').disabled = !settings.cats.length;
-  $('#startBtn').textContent = settings.cats.length ? `Start session · ${settings.cats.length} topic${settings.cats.length>1?'s':''}` : 'Pick at least one topic';
-  $('#weakBtn').hidden = !recommendations().length;
+  document.querySelectorAll('.ghead input').forEach(i=>{ const cs=CATS.filter(c=>c.g===i.dataset.grp); const on=cs.filter(c=>settings.cats.includes(c.id)).length; i.indeterminate = on>0&&on<cs.length; });
+  $('#lvlOpts').innerHTML=[1,2,3].map(l=>`<button class="opt" role="radio" data-lvl="${l}" aria-checked="${settings.lvl===l}"><b>${LVL[l]}</b><span>${LVL_HINT[l]}</span><code>${fmt(LVL_EX[l])}</code></button>`).join('');
+  const mode=settings.len[0];
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.m===mode));
+  const vals = mode==='q' ? [[10,'about 3 min'],[20,'about 6 min'],[30,'about 10 min'],[50,'about 15 min']] : [[2,'quick'],[5,'standard'],[10,'long']];
+  $('#lenVals').innerHTML = vals.map(([v,sub])=>`<button data-len="${mode}${v}" aria-pressed="${settings.len===mode+v}">${v}${mode==='q'?'':' min'}<small>${mode==='q'?'questions · ':''}${sub}</small></button>`).join('');
+  const n=settings.cats.length, lenTxt = mode==='q' ? `${settings.len.slice(1)} questions` : `${settings.len.slice(1)} minutes`;
+  $('#summary').innerHTML = n ? `<b>${n} topic${n>1?'s':''}</b> · <b>${LVL[settings.lvl]}</b> · <b>${lenTxt}</b>` : `<span class="warnline">Pick at least one topic to start.</span>`;
+  $('#startBtn').disabled = !n;
 }
-$('#groups').addEventListener('click', e=>{
-  const c=e.target.closest('[data-cat]'), g=e.target.closest('[data-grp]');
-  if(c){ const id=c.dataset.cat; settings.cats = settings.cats.includes(id) ? settings.cats.filter(x=>x!==id) : [...settings.cats,id]; }
-  else if(g){ const ids=CATS.filter(x=>x.g===g.dataset.grp).map(x=>x.id); const all=ids.every(id=>settings.cats.includes(id));
-    settings.cats = all ? settings.cats.filter(x=>!ids.includes(x)) : [...new Set([...settings.cats,...ids])]; }
+$('#groups').addEventListener('change', e=>{
+  const i=e.target;
+  if(i.dataset.cat){ const id=i.dataset.cat; settings.cats = i.checked ? [...new Set([...settings.cats,id])] : settings.cats.filter(x=>x!==id); }
+  else if(i.dataset.grp){ const ids=CATS.filter(x=>x.g===i.dataset.grp).map(x=>x.id); settings.cats = i.checked ? [...new Set([...settings.cats,...ids])] : settings.cats.filter(x=>!ids.includes(x)); }
   else return;
+  settings.cats = CATS.map(c=>c.id).filter(id=>settings.cats.includes(id));
   saveSettings(); renderSetup();
 });
-$('#selAll').onclick=()=>{ settings.cats=CATS.map(c=>c.id); saveSettings(); renderSetup(); };
-$('#selNone').onclick=()=>{ settings.cats=[]; saveSettings(); renderSetup(); };
-$('#lvlSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; settings.lvl=+b.dataset.v; saveSettings(); renderSetup(); };
-$('#lenSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; settings.len=b.dataset.v; saveSettings(); renderSetup(); };
+$('#presets').onclick=e=>{ const b=e.target.closest('[data-preset]'); if(!b) return; settings.cats=PRESETS.find(p=>p.id===b.dataset.preset).ids(); saveSettings(); renderSetup(); };
+$('#lvlOpts').onclick=e=>{ const b=e.target.closest('[data-lvl]'); if(!b) return; settings.lvl=+b.dataset.lvl; saveSettings(); renderSetup(); };
+$('#modeSeg').onclick=e=>{ const b=e.target.closest('[data-m]'); if(!b||settings.len[0]===b.dataset.m) return; settings.len = b.dataset.m==='q'?'q20':'t5'; saveSettings(); renderSetup(); };
+$('#lenVals').onclick=e=>{ const b=e.target.closest('[data-len]'); if(!b) return; settings.len=b.dataset.len; saveSettings(); renderSetup(); };
 
 /* ---------- session ---------- */
 let S=null, tick=null;
@@ -788,7 +822,7 @@ function renderQ(){
   const q=S.q;
   $('#qCat').textContent=catLabel(q.cat);
   $('#qLvl').textContent=LVL[q.lvl];
-  const pr=$('#qPrompt'); pr.className='prompt'+(q.text?' text':''); pr.innerHTML=fmt(q.prompt);
+  const pr=$('#qPrompt'); pr.className='prompt'+(q.text?' text':''); pr.innerHTML=fmt(q.prompt)+(q.sub?`<div class="qsub">${esc(q.sub)}</div>`:'');
   $('#fb').innerHTML=''; $('#fb').className='';
   const box=$('#qInput');
   if(q.kind==='choice'){
@@ -900,8 +934,7 @@ function mistakeCard(x){
     <div class="line">You: <span class="x">${esc(x.a)}</span> · Answer: <span class="r">${fmt(x.r)}</span> ${x.tag?`<span class="tagpill">${x.tag}</span>`:''}</div>
     ${x.m?`<div class="line">${fmt(x.m)}</div>`:''}</div>`;
 }
-$('#startBtn').onclick=()=>startSession(settings.cats, settings.lvl, settings.len);
-$('#weakBtn').onclick=()=>{ const r=recommendations(); if(r.length) startSession(r.map(x=>x.id), settings.lvl, 'q20'); };
+$('#startBtn').onclick=()=>{ if(settings.cats.length) startSession(settings.cats, settings.lvl, settings.len); };
 
 /* ---------- analytics ---------- */
 function catStats(id){
