@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B45C8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mental Math">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>GMAT Mental Math</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F1F4F3; --surface:#FFFFFF; --surface-2:#F7F9F8; --ink:#15202B; --ink-2:#475564; --muted:#7A8793;
+  --line:#D6DEDB; --grid:#E6ECEA; --accent:#2B45C8; --accent-ink:#FFFFFF; --accent-soft:#E4E9FB;
+  --good:#1D8657; --good-soft:#DDF1E6; --bad:#C23E37; --bad-soft:#F8E1DF; --warn:#A86D12; --warn-soft:#F7EBD6;
+  --h0:#E3E9E7; --h1:#C3CDF3; --h2:#8C9EE8; --h3:#4F67D6; --h4:#2B45C8;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F1419; --surface:#171E26; --surface-2:#1C242E; --ink:#E6ECF1; --ink-2:#A7B3BF; --muted:#7B8794;
+    --line:#2A3440; --grid:#1F2831; --accent:#8398FF; --accent-ink:#0F1419; --accent-soft:#232C52;
+    --good:#4CC38A; --good-soft:#15352A; --bad:#F07167; --bad-soft:#3B1D1C; --warn:#E3AA4F; --warn-soft:#3A2C14;
+    --h0:#1E2731; --h1:#27346A; --h2:#3A4FA6; --h3:#5C74E0; --h4:#8398FF;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F1419; --surface:#171E26; --surface-2:#1C242E; --ink:#E6ECF1; --ink-2:#A7B3BF; --muted:#7B8794;
+  --line:#2A3440; --grid:#1F2831; --accent:#8398FF; --accent-ink:#0F1419; --accent-soft:#232C52;
+  --good:#4CC38A; --good-soft:#15352A; --bad:#F07167; --bad-soft:#3B1D1C; --warn:#E3AA4F; --warn-soft:#3A2C14;
+  --h0:#1E2731; --h1:#27346A; --h2:#3A4FA6; --h3:#5C74E0; --h4:#8398FF;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);margin:0}
+.wrap{max-width:880px;margin:0 auto;padding-inline:16px;padding-block:20px 56px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.brand h1{font-size:30px;font-weight:800;line-height:1.05}
+.brand p{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+.streak{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.streak .big{font:800 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.streak .meta{font-size:12.5px;color:var(--ink-2);line-height:1.35}
+.week{display:flex;gap:4px;margin-top:5px}
+.week i{width:12px;height:12px;border-radius:3px;background:var(--h0);display:block}
+.week i.on{background:var(--accent)}
+.week i.today{box-shadow:0 0 0 1.5px var(--ink-2) inset}
+.status{font-weight:600}
+.status.ok{color:var(--good)} .status.risk{color:var(--warn)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tab{background:none;border:0;padding:10px 14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.note{font-size:13px;color:var(--ink-2);background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin-bottom:16px}
+
+/* setup */
+.setup{display:grid;gap:22px}
+.block h2{font-size:17px;font-weight:600;margin-bottom:10px;font-family:var(--body);letter-spacing:0}
+.groups{display:grid;gap:14px}
+.grp-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-size:12.5px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;display:inline-flex;gap:8px;align-items:center}
+.chip small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"] small{color:var(--ink-2)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 14px;font-size:13.5px;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 22px;font-weight:600;font-size:15px}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.ghost{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-weight:500}
+
+/* run */
+.runbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13.5px;color:var(--ink-2)}
+.progress{height:4px;background:var(--h0);border-radius:2px;overflow:hidden;margin-bottom:14px}
+.progress b{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.board{background-color:var(--surface);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;border:1px solid var(--line);border-radius:14px;padding:22px 20px 20px;position:relative}
+.qcat{display:flex;justify-content:space-between;gap:8px}
+.prompt{font-family:var(--mono);font-size:clamp(26px,6.4vw,42px);font-weight:600;text-align:center;padding:28px 0 26px;line-height:1.3;overflow-wrap:anywhere}
+.prompt.text{font-size:clamp(19px,4.4vw,26px);font-family:var(--body);font-weight:500}
+.prompt.text .fr{font-size:1.05em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-family:var(--mono);line-height:1.08;margin:0 .08em}
+.fr>span:first-child{border-bottom:.07em solid currentColor;padding:0 .18em}
+.fr>span:last-child{padding:0 .18em}
+sup{font-size:.6em;vertical-align:.8em;line-height:0}
+.ansrow{display:flex;gap:8px;max-width:440px;margin:0 auto}
+.ansrow input{flex:1;min-width:0;font:600 22px var(--mono);padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:center}
+.ansrow input:focus{border-color:var(--accent);outline:none}
+.keys{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.keys button{font-family:var(--mono);min-width:40px;padding:6px 10px;border:1px solid var(--line);background:var(--surface-2);border-radius:8px}
+.choices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.choice{font:600 24px var(--mono);min-width:110px;padding:14px 18px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);position:relative}
+.choice kbd{position:absolute;top:4px;left:8px;font:500 10.5px var(--mono);color:var(--muted)}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.clock{height:3px;background:var(--h0);border-radius:2px;margin-top:18px;overflow:hidden}
+.clock b{display:block;height:100%;width:0;background:var(--ink-2)}
+.clock.over b{background:var(--warn)}
+.fb{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:14.5px;display:grid;gap:6px}
+.fb.ok{background:var(--good-soft)} .fb.no{background:var(--bad-soft)}
+.fb .v{font-weight:600}
+.fb .method{color:var(--ink-2)}
+.fb .method b{color:var(--ink);font-weight:600}
+.tagpill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface);color:var(--bad);border:1px solid var(--bad)}
+.runfoot{display:flex;justify-content:space-between;margin-top:14px;gap:10px;flex-wrap:wrap}
+
+/* results */
+.res-head{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;margin-bottom:16px}
+.res-head .score{font:800 52px/1 var(--display)}
+.res-list{display:grid;gap:8px;margin:14px 0 20px}
+.mist{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.mist .p{font-family:var(--mono);font-size:17px;font-weight:600}
+.mist .line{font-size:13.5px;color:var(--ink-2)}
+.mist .line .x{color:var(--bad);font-weight:600} .mist .line .r{color:var(--good);font-weight:600}
+
+/* analytics */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:26px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tile .n{font:800 28px/1.1 var(--display);font-variant-numeric:tabular-nums;margin-top:4px}
+.sec{margin-bottom:30px}
+.sec h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.sec .sub{color:var(--ink-2);font-size:13.5px;margin:0 0 12px}
+.heat{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:3px;overflow-x:auto;padding-bottom:4px}
+.heat i{border-radius:3px;background:var(--h0);display:block}
+.heat i.f{background:transparent}
+.heat i.l1{background:var(--h1)} .heat i.l2{background:var(--h2)} .heat i.l3{background:var(--h3)} .heat i.l4{background:var(--h4)}
+.heat i.today{outline:1.5px solid var(--ink-2);outline-offset:0}
+.legend{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.recs{display:grid;gap:10px}
+.rec{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:6px}
+.rec .t{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.rec .t h3{font-size:16.5px;font-family:var(--body);font-weight:600;letter-spacing:0}
+.rec .why{font-size:13px;color:var(--ink-2)}
+.rec .tip{font-size:14px}
+.sev{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px}
+.sev.hi{background:var(--bad-soft);color:var(--bad)} .sev.mid{background:var(--warn-soft);color:var(--warn)} .sev.lo{background:var(--good-soft);color:var(--good)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tblwrap{overflow-x:auto}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tbl td{padding:8px;border-bottom:1px solid var(--grid);vertical-align:middle}
+.tbl td.num{text-align:right;white-space:nowrap}
+.tbl tr.dim td{color:var(--muted)}
+.bar{display:flex;align-items:center;gap:8px;min-width:140px}
+.bar .track{flex:1;height:8px;background:var(--h0);border-radius:4px;overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);border-radius:4px}
+.bar .v{font-family:var(--mono);font-size:12.5px;width:38px;text-align:right}
+.slow{color:var(--warn);font-weight:600}
+.tags{display:grid;gap:10px}
+.tagrow{display:grid;grid-template-columns:minmax(0,190px) 1fr;gap:4px 14px;align-items:center}
+.tagrow .desc{grid-column:2;font-size:12.5px;color:var(--ink-2)}
+.tagrow .bar .fill{background:var(--bad)}
+.empty{color:var(--muted);font-size:14px;background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:16px}
+svg text{fill:var(--muted);font:11px var(--mono)}
+.danger{color:var(--bad);border-color:var(--bad)}
+@media (max-width:620px){
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .tagrow{grid-template-columns:1fr}
+  .tagrow .desc{grid-column:1}
+  .brand h1{font-size:25px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+html,body{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>GMAT Mental Math</h1>
+      <p>Daily drills on the arithmetic the Quant section assumes you can do in your head.</p>
+    </div>
+    <div class="streak" id="streak" aria-live="polite"></div>
+  </header>
+
+  <div class="note" id="storeNote" hidden>Progress is saved in this browser only for now.</div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabTrain" aria-selected="true">Train</button>
+    <button class="tab" role="tab" id="tabStats" aria-selected="false">Progress</button>
+  </nav>
+
+  <!-- TRAIN -->
+  <section id="viewTrain">
+    <div id="setup" class="setup">
+      <div class="block">
+        <div class="row" style="justify-content:space-between;margin-bottom:10px">
+          <h2 style="margin:0">What to drill</h2>
+          <div class="row">
+            <button class="linkbtn" id="selAll">All</button>
+            <button class="linkbtn" id="selNone">Clear</button>
+          </div>
+        </div>
+        <div class="groups" id="groups"></div>
+      </div>
+      <div class="block">
+        <h2>Difficulty</h2>
+        <div class="seg" id="lvlSeg">
+          <button data-v="1">Easy</button><button data-v="2">Medium</button><button data-v="3">Hard</button>
+        </div>
+        <div class="hint" id="lvlHint"></div>
+      </div>
+      <div class="block">
+        <h2>Length</h2>
+        <div class="seg" id="lenSeg">
+          <button data-v="q10">10 questions</button><button data-v="q20">20</button><button data-v="q30">30</button><button data-v="q50">50</button>
+          <button data-v="t2">2 min</button><button data-v="t5">5 min</button><button data-v="t10">10 min</button>
+        </div>
+        <div class="hint">A day counts toward your streak once you finish a session of at least 5 questions.</div>
+      </div>
+      <div class="row">
+        <button class="primary" id="startBtn">Start session</button>
+        <button class="ghost" id="weakBtn" hidden>Drill my weak spots</button>
+      </div>
+    </div>
+
+    <div id="run" hidden>
+      <div class="runbar">
+        <span id="runLeft" class="mono"></span>
+        <span id="runScore" class="mono"></span>
+      </div>
+      <div class="progress"><b id="runProg"></b></div>
+      <div class="board">
+        <div class="qcat"><span class="label" id="qCat"></span><span class="label" id="qLvl"></span></div>
+        <div class="prompt" id="qPrompt"></div>
+        <div id="qInput"></div>
+        <div class="clock" id="clock"><b></b></div>
+        <div id="fb"></div>
+      </div>
+      <div class="runfoot">
+        <button class="ghost" id="skipBtn">Skip</button>
+        <button class="ghost" id="endBtn">End session</button>
+      </div>
+    </div>
+
+    <div id="done" hidden></div>
+  </section>
+
+  <!-- STATS -->
+  <section id="viewStats" hidden></section>
+</div>
+
+<script>
+(() => {
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const R = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const gcd = (a,b) => { a=Math.abs(a); b=Math.abs(b); while(b){[a,b]=[b,a%b]} return a; };
+const lcm = (a,b) => a/gcd(a,b)*b;
+const red = (n,d) => { if(d<0){n=-n;d=-d} const g=gcd(n,d)||1; return {n:n/g,d:d/g}; };
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function num(x){
+  if(!isFinite(x)) return String(x);
+  let r = Math.round(x*1e8)/1e8;
+  if(Object.is(r,-0)) r = 0;
+  let s = String(Math.abs(r));
+  if(s.includes('e')) s = Math.abs(r).toFixed(10).replace(/0+$/,'').replace(/\.$/,'');
+  return (r<0?'−':'') + s;
+}
+const sn = x => x<0 ? `(${num(x)})` : num(x);
+function fm(f){ if(f.d===1) return num(f.n); return (f.n<0?'−':'') + `[${Math.abs(f.n)}/${f.d}]`; }
+function fmt(s){
+  s = esc(s);
+  s = s.replace(/\[(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\]/g,'<span class="fr"><span>$1</span><span>$2</span></span>');
+  s = s.replace(/\^\{([^}]*)\}/g,'<sup>$1</sup>');
+  s = s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+  return s;
+}
+function factorize(n){ const out=[]; let p=2; while(n>1&&p*p<=n){ let e=0; while(n%p===0){n/=p;e++} if(e) out.push([p,e]); p++; } if(n>1) out.push([n,1]); return out; }
+const fstr = fac => fac.map(([p,e]) => e>1 ? `${p}^{${e}}` : `${p}`).join(' · ');
+const isPrime = n => n>1 && factorize(n).length===1 && factorize(n)[0][1]===1;
+function fracIn(d){ let n; do{ n=R(1,d-1) }while(gcd(n,d)!==1); return {n,d}; }
+const dstr = (i,p) => num(Number((i/10**p).toFixed(p)));
+const dayKey = d => d.toLocaleDateString('en-CA');
+const addDays = (key,k) => { const d=new Date(key+'T12:00:00'); d.setDate(d.getDate()+k); return dayKey(d); };
+const todayKey = () => dayKey(new Date());
+const secs = ms => (ms/1000).toFixed(1)+'s';
+
+/* ---------- categories ---------- */
+const CATS = [
+ {id:'add',  g:'Arithmetic', name:'Add & subtract', t:[6,10,15], tip:'Round one number to a friendly value, then compensate: 487 + 296 = 487 + 300 − 4.'},
+ {id:'mul',  g:'Arithmetic', name:'Multiplication', t:[8,15,25], tip:'Split into tens and units: 47 × 6 = 240 + 42. For two-digit × two-digit, round the smaller one: 38 × 19 = 38 × 20 − 38.'},
+ {id:'div',  g:'Arithmetic', name:'Division', t:[8,15,25], tip:'Turn it into multiplication: 672 ÷ 16 → 16 × ? = 672. Pull out an easy chunk first (16 × 40 = 640), then the rest.'},
+ {id:'dec',  g:'Arithmetic', name:'Decimals', t:[10,15,25], tip:'Drop the points, compute with whole numbers, then place the point by counting decimal places. To divide, shift both points until the divisor is whole.'},
+ {id:'neg',  g:'Arithmetic', name:'Signs & order of operations', t:[10,20,30], tip:'Powers, then × ÷, then + −. Subtracting a negative is adding. (−3)² = 9 but −3² = −9.'},
+ {id:'fadd', g:'Fractions', name:'Add & subtract', t:[15,25,40], tip:'Find the LCD, rescale each numerator, then add the tops only: 2/3 + 3/4 = 8/12 + 9/12 = 17/12.'},
+ {id:'fmul', g:'Fractions', name:'Multiply & divide', t:[12,20,30], tip:'Cancel diagonally before multiplying. Dividing = multiplying by the flipped divisor.'},
+ {id:'fsimp',g:'Fractions', name:'Simplify', t:[10,15,25], tip:'Find the GCD with divisibility rules (2, 3, 5, 7, 11…) and divide top and bottom. Check again for leftover common factors.'},
+ {id:'fcmp', g:'Fractions', name:'Compare', t:[10,15,25], tip:'Cross-multiply: a/b > c/d exactly when a×d > c×b. Or compare both to a benchmark like 1/2 or 3/4.'},
+ {id:'fconv',g:'Fractions', name:'Fraction ↔ decimal ↔ %', t:[6,10,15], tip:'Know the unit fractions cold: 1/8 = 0.125, 1/6 ≈ 0.167, 1/7 ≈ 0.143, 1/9 ≈ 0.111, 1/11 ≈ 0.091, 1/12 ≈ 0.083. Then multiply.'},
+ {id:'pct',  g:'Percents', name:'Percent of', t:[8,15,25], tip:'Build from 10% and 1%: 35% = 3 × 10% + half of 10%. Or use benchmarks: 12.5% = 1/8, 37.5% = 3/8.'},
+ {id:'pchg', g:'Percents', name:'Percent change', t:[12,20,30], tip:'Change ÷ ORIGINAL. Successive changes multiply: +20% then −25% → 1.2 × 0.75 = 0.9 → −10%.'},
+ {id:'sq',   g:'Powers & roots', name:'Squares', t:[4,8,15], tip:'Know 1–25² cold. Beyond that: 47² = (50 − 3)² = 2500 − 300 + 9. Ending in 5: 65² → 6 × 7 = 42, append 25 → 4225.'},
+ {id:'root', g:'Powers & roots', name:'Square & cube roots', t:[4,8,15], tip:'Bracket between tens (40² = 1600, 50² = 2500), then use the last digit to pick the candidate.'},
+ {id:'pow',  g:'Powers & roots', name:'Exponent rules', t:[5,12,20], tip:'Rewrite everything to one base (4 = 2², 27 = 3³). Multiply → add exponents; power of a power → multiply. 2ⁿ + 2ⁿ = 2ⁿ⁺¹.'},
+ {id:'gcd',  g:'Number properties', name:'GCD & LCM', t:[12,20,35], tip:'Prime-factorise. GCD: shared primes at the lowest power. LCM: every prime at the highest power. GCD × LCM = a × b.'},
+ {id:'prime',g:'Number properties', name:'Prime factorisation', t:[12,20,30], tip:'Divide out the smallest prime repeatedly (2, 3, 5, 7…) until the quotient is prime.'},
+ {id:'divis',g:'Number properties', name:'Divisibility', t:[6,10,15], tip:'3 and 9: digit sum. 4: last two digits. 8: last three. 11: alternating digit sum. Composite k: test its coprime parts (12 = 3 × 4).'},
+ {id:'nfac', g:'Number properties', name:'Number of factors', t:[15,25,40], tip:'Factorise N = pᵃ · qᵇ · rᶜ, then the count is (a+1)(b+1)(c+1).'},
+];
+const CAT = Object.fromEntries(CATS.map(c=>[c.id,c]));
+const GROUPS = [...new Set(CATS.map(c=>c.g))];
+const catLabel = id => { const c=CAT[id]; return c.g==='Fractions'&&!c.name.includes('Fraction') ? 'Fractions · '+c.name : c.name; };
+const LVL = ['','Easy','Medium','Hard'];
+const LVL_HINT = ['','Small numbers to build speed and confidence.','Roughly the numbers you meet in GMAT Quant.','Bigger numbers and multi-step problems. Faster than the test needs.'];
+
+const TAGS = {
+ 'Carry / borrow slip':'Off by 1, 10 or 100. Work left to right and round-and-compensate instead of carrying in columns.',
+ 'Decimal place':'Right digits, wrong magnitude. Estimate the size first, then count decimal places.',
+ 'Sign error':'Right size, wrong sign. Track every minus sign; subtracting a negative adds.',
+ 'Reciprocal':'You gave the flipped value. Check which quantity belongs on top.',
+ 'Not fully simplified':'Value right, but not in lowest terms. Divide by the GCD, then check again.',
+ 'Answered as a decimal':'The question asked for a fraction: 0.375 = 375/1000 = 3/8.',
+ 'Added across':'You added tops and bottoms. Get a common denominator, then add numerators only.',
+ 'Forgot to flip':'Dividing by a fraction means multiplying by its reciprocal.',
+ 'Wrong base':'Percent change divides by the ORIGINAL value, not the new one.',
+ 'Added the percents':'Successive percent changes multiply, they do not add.',
+ 'GCD / LCM mix-up':'GCD ≤ the smallest number; LCM ≥ the largest. Sanity-check which one you produced.',
+ 'Multiplied instead of LCM':'a × b is only the LCM when a and b share no factor.',
+ 'Forgot the +1':'Factor count uses (exponent + 1) per prime, because each exponent can also be 0.',
+ 'Composite factor left':'A factor in your answer is not prime. Keep dividing until every factor is prime.',
+ 'Misjudged size':'Cross-multiply instead of eyeballing: a/b vs c/d → a×d vs c×b.',
+ 'Divisibility rule':'Apply the rule step by step; for a composite k, check both coprime parts.',
+ 'Close but off':'Within 5%: the method was right, the arithmetic slipped near the end.',
+ 'Calculation error':'A big miss. Re-read the method for this category and slow down.',
+ 'Skipped':'Skipped or ran out of time. Practise this category one level easier first.',
+};
+
+/* ---------- generators ---------- */
+const G = {};
+G.add = L => {
+  let a,b,op=pick(['+','−']);
+  if(L===1){a=R(12,99);b=R(11,99)} else if(L===2){a=R(120,999);b=R(101,999)} else {a=R(1200,9999);b=R(150,4999)}
+  if(op==='−'&&b>a&&L<3)[a,b]=[b,a];
+  const ans = op==='+'?a+b:a-b;
+  const u = L===1?10:100, B=Math.round(b/u)*u, d=B-b;
+  let method;
+  if(d===0||B===0) method = `${a} ${op} ${b} = ${num(ans)}`;
+  else { const s2 = op==='+' ? (d>0?'−':'+') : (d>0?'+':'−');
+    method = `Round ${b} to ${B}: ${a} ${op} ${B} = ${num(op==='+'?a+B:a-B)}, then ${s2} ${Math.abs(d)} → **${num(ans)}**`; }
+  return {prompt:`${a} ${op} ${b}`, kind:'num', ans, method};
+};
+G.mul = L => {
+  let a,b;
+  if(L===1){a=R(12,99);b=R(3,9)} else if(L===2){a=R(13,59);b=R(11,19)}
+  else if(Math.random()<.3){a=R(112,499);b=R(3,9)} else {a=R(23,99);b=R(23,99)}
+  const ans=a*b; let method;
+  if(L===1){const T=Math.floor(a/10)*10,U=a%10; method = U?`${T} × ${b} + ${U} × ${b} = ${T*b} + ${U*b} = **${ans}**`:`**${ans}**`}
+  else if(a>=100){const H=Math.floor(a/100)*100,r=a-H; method=`${H} × ${b} + ${r} × ${b} = ${H*b} + ${r*b} = **${ans}**`}
+  else { const B=Math.round(b/10)*10, d=b-B;
+    method = d===0?`**${ans}**`:`${a} × ${B} ${d>0?'+':'−'} ${a} × ${Math.abs(d)} = ${a*B} ${d>0?'+':'−'} ${a*Math.abs(d)} = **${ans}**`; }
+  return {prompt:`${a} × ${b}`, kind:'num', ans, method};
+};
+G.div = L => {
+  if(L<3){ const b=L===1?R(3,9):R(12,25), q=L===1?R(12,99):R(12,60), a=b*q, q1=Math.floor(q/10)*10;
+    const method = q1===q ? `${b} × ${q} = ${a} → **${q}**` : `${b} × ${q1} = ${b*q1}; the remaining ${a-b*q1} = ${b} × ${q-q1} → **${q}**`;
+    return {prompt:`${a} ÷ ${b}`, kind:'num', ans:q, method}; }
+  const b=pick([4,8,16,20,25,40,125]); let a; do{a=R(100,1999)}while(a%b===0);
+  const k=Math.floor(a/b), r=a-k*b, ans=a/b;
+  return {prompt:`${a} ÷ ${b}`, kind:'num', ans, method:`${a} = ${b} × ${k} + ${r} → ${k} + [${r}/${b}] = **${num(ans)}**`};
+};
+G.dec = L => {
+  const mode = L===1 ? pick(['mul','div','add']) : pick(['mul','mul','div']);
+  if(mode==='add'){ const ai=R(101,999), bi=R(2,99); const ans=(ai+bi*10)/100;
+    return {prompt:`${dstr(ai,2)} + ${dstr(bi,1)}`, kind:'num', ans, method:`Line up the points: ${dstr(ai,2)} + ${(bi/10).toFixed(2)} = **${num(ans)}**`}; }
+  if(mode==='mul'){
+    let a,b;
+    if(L===1){a=[R(2,9),1]; b=pick([[R(2,9),1],[R(2,9),0],[R(11,19),1]])}
+    else if(L===2){a=[R(2,9),2]; b=pick([[R(2,9),1],[R(12,50),0],[R(11,25),1]])}
+    else {a=[R(11,99),3]; b=pick([[R(2,9)*50,0],[R(12,48),2],[R(2,9),2]])}
+    const P=a[1]+b[1], prod=a[0]*b[0], ans=Number((prod/10**P).toFixed(P));
+    return {prompt:`${dstr(...a)} × ${dstr(...b)}`, kind:'num', ans,
+      method:`Ignore the points: ${a[0]} × ${b[0]} = ${prod}. Decimal places: ${a[1]} + ${b[1]} = ${P} → **${num(ans)}**`}; }
+  const d = pick(L===1?[[2,1],[5,1],[4,1]]:L===2?[[4,2],[6,2],[8,2],[3,1]]:[[7,2],[12,3],[25,3],[6,3],[15,2]]);
+  const q = L===1?R(2,9):L===2?R(2,40):R(11,90); const ai=d[0]*q;
+  const aS=dstr(ai,d[1]), dS=dstr(d[0],d[1]);
+  return {prompt:`${aS} ÷ ${dS}`, kind:'num', ans:q, method:`Shift both points ${d[1]} place${d[1]>1?'s':''} right: ${aS} ÷ ${dS} = ${ai} ÷ ${d[0]} = **${q}**`};
+};
+G.neg = L => {
+  if(L===1){ const a=R(-20,20); const t=[[pick(['+','−']),R(-15,15)||3],[pick(['+','−']),R(-15,15)||5]];
+    let s=num(a), val=a, parts=[sn(a)];
+    t.forEach(([op,v])=>{ s+=` ${op} ${sn(v)}`; const c=op==='+'?v:-v; val+=c; parts.push(sn(c)); });
+    return {prompt:s, kind:'num', ans:val, method:`Rewrite as additions: ${parts.join(' + ')} = **${num(val)}**`}; }
+  if(L===2){ let a; do{a=R(-7,7)}while(a===0||a===1); const b=R(-9,9), c=R(-9,9), d=R(-20,20);
+    const bc=b-c, abc=a*bc, ans=abc+d;
+    return {prompt:`${num(a)} × (${num(b)} − ${sn(c)}) + ${sn(d)}`, kind:'num', ans,
+      method:`Brackets first: ${num(b)} − ${sn(c)} = ${num(bc)}; then ${num(a)} × ${sn(bc)} = ${num(abc)}; then ${num(abc)} + ${sn(d)} = **${num(ans)}**`}; }
+  const p=pick([-2,-3,-4,-5,2,3]), e1=pick([2,3]), q=pick([-2,-3,-1,2,3,-4]), e2=pick([2,3]), k=R(2,5);
+  const pe=p**e1, qe=q**e2, kq=k*qe, ans=pe-kq;
+  return {prompt:`(${num(p)})^{${e1}} − ${k} × (${num(q)})^{${e2}}`, kind:'num', ans,
+    method:`Powers first: (${num(p)})^{${e1}} = ${num(pe)}, (${num(q)})^{${e2}} = ${num(qe)}; then ${k} × ${sn(qe)} = ${num(kq)}; ${num(pe)} − ${sn(kq)} = **${num(ans)}**`};
+};
+G.fadd = L => {
+  let fr, ops;
+  if(L===1){ const d1=pick([2,3,4,5,6,8]); const d2=Math.min(d1*pick([1,2,3]),24); fr=[fracIn(d1),fracIn(d2)]; ops=['+']; }
+  else if(L===2){ fr=[fracIn(R(2,12)),fracIn(R(2,12))]; ops=[pick(['+','−'])]; }
+  else { fr=[fracIn(R(2,15)),fracIn(R(3,15)),fracIn(R(2,12))]; ops=[pick(['+','−']),pick(['+','−'])]; }
+  const Ld = fr.reduce((a,f)=>lcm(a,f.d),1);
+  const sc = fr.map(f=>f.n*Ld/f.d);
+  let tot=sc[0]; ops.forEach((o,i)=>{ tot += o==='+'?sc[i+1]:-sc[i+1]; });
+  const ans=red(tot,Ld);
+  let prompt=fm(fr[0]); ops.forEach((o,i)=>prompt+=` ${o} ${fm(fr[i+1])}`);
+  let steps=`[${sc[0]}/${Ld}]`; ops.forEach((o,i)=>steps+=` ${o} [${sc[i+1]}/${Ld}]`);
+  let tn=fr[0].n; ops.forEach((o,i)=>tn+= o==='+'?fr[i+1].n:-fr[i+1].n);
+  const td=fr.reduce((a,f)=>a+f.d,0);
+  const raw=fm({n:tot,d:Ld});
+  const method=`LCD = ${Ld}: ${steps} = ` + ((ans.n!==tot||ans.d!==Ld) ? `${raw} = **${fm(ans)}**` : `**${raw}**`);
+  return {prompt, kind:'frac', ans, method, traps:[{v:tn/td, tag:'Added across'}]};
+};
+G.fmul = L => {
+  const f = (lo,hi) => { const d=R(lo,hi); let n; do{n=R(1,hi)}while(gcd(n,d)!==1||n===d); return {n,d}; };
+  let a,b,c=null,ops;
+  if(L===1){a=f(2,9);b=f(2,9);ops=['×']}
+  else if(L===2){a=f(2,12);b=f(2,12);ops=['÷']}
+  else {a=f(3,30);b=f(3,30);c=f(3,20);ops=pick([['×','÷'],['÷','×'],['×','×']])}
+  const list=[a,b,c].filter(Boolean);
+  let N=a.n,D=a.d, noflipN=a.n, noflipD=a.d;
+  const eff=[fm(a)];
+  ops.forEach((o,i)=>{ const x=list[i+1];
+    if(o==='×'){N*=x.n;D*=x.d;noflipN*=x.n;noflipD*=x.d;eff.push(fm(x))}
+    else {N*=x.d;D*=x.n;noflipN*=x.n;noflipD*=x.d;eff.push(fm({n:x.d,d:x.n}))} });
+  const ans=red(N,D);
+  if(L===3 && (ans.n>40||ans.d>40)) return null;
+  let prompt=fm(a); ops.forEach((o,i)=>prompt+=` ${o} ${fm(list[i+1])}`);
+  const flip = ops.includes('÷') ? 'Flip the divisor: ' + eff.join(' × ') + '. ' : '';
+  const method = `${flip}Tops × tops, bottoms × bottoms: [${N}/${D}] → cancel → **${fm(ans)}**`;
+  const traps = ops.includes('÷') ? [{v:noflipN/noflipD, tag:'Forgot to flip'}] : [];
+  return {prompt, kind:'frac', ans, method, traps};
+};
+G.fsimp = L => {
+  const g = L===1?R(2,6):L===2?R(6,18):pick([13,14,15,16,17,18,19,21,22,23,24,26,27,28,36,42]);
+  const dmax = L===1?9:L===2?15:25;
+  const d0=R(2,dmax); let n0; do{n0=R(1,d0*1.6|0)}while(gcd(n0,d0)!==1||n0===d0);
+  return {prompt:`Simplify [${n0*g}/${d0*g}]`, text:true, kind:'frac', strict:true, ans:{n:n0,d:d0},
+    method:`GCD(${n0*g}, ${d0*g}) = ${g} → divide both → **${fm({n:n0,d:d0})}**`};
+};
+G.fcmp = L => {
+  const k = L===3?3:2, maxD = L===1?10:L===2?20:25, gap = L===1?0.1:L===2?0.08:0.06;
+  for(let tries=0;tries<300;tries++){
+    const fr=[]; while(fr.length<k){ const d=R(3,maxD); const f=fracIn(d); if(!fr.some(x=>x.n*f.d===f.n*x.d)) fr.push(f); }
+    const vals=fr.map(f=>f.n/f.d); const spread=Math.max(...vals)-Math.min(...vals);
+    if(L===1 ? spread<gap : spread>gap || spread<0.004) continue;
+    const ans=vals.indexOf(Math.max(...vals));
+    let method;
+    if(k===2){ const [x,y]=fr; method=`Cross-multiply: ${x.n} × ${y.d} = ${x.n*y.d} vs ${y.n} × ${x.d} = ${y.n*x.d} → **${fm(fr[ans])}** is larger`; }
+    else method = fr.map(f=>`${fm(f)} ≈ ${(f.n/f.d).toFixed(3)}`).join(', ') + ` → **${fm(fr[ans])}**. Compare pairs by cross-multiplying.`;
+    return {prompt:k===2?'Which is larger?':'Which is largest?', text:true, kind:'choice', choices:fr.map(fm), ans, method, wrongTag:'Misjudged size'};
+  }
+  return null;
+};
+const term = d => { while(d%2===0)d/=2; while(d%5===0)d/=5; return d===1; };
+G.fconv = L => {
+  const d = pick(L===1?[2,4,5,10,20,25]:L===2?[8,3,6,40,16,8]:[7,9,11,12,15,30,7]);
+  const {n}=fracIn(d); const f={n,d}; const T=term(d);
+  const mode = T ? pick(['f2d','d2f','f2p','p2f']) : pick(['f2d','f2p']);
+  const unit = T ? num(1/d) : (1/d).toFixed(4)+'…';
+  if(mode==='f2d'){ const v=n/d;
+    return {prompt:`${fm(f)} as a decimal${T?'':' (3 decimal places)'}`, text:true, kind:T?'num':'approx', ans:v, tol:0.0006, round:3,
+      method:`1/${d} = ${unit} → ${n} × ${unit} ${T?'=':'≈'} **${T?num(v):v.toFixed(3)}**`}; }
+  if(mode==='f2p'){ const v=100*n/d;
+    return {prompt:`${fm(f)} as a percent${T?'':' (1 decimal place)'}`, text:true, kind:T?'num':'approx', ans:v, tol:0.06, round:1, unit:'%',
+      method:`1/${d} = ${unit} → ${n} × ${unit} × 100 ${T?'=':'≈'} **${T?num(v):v.toFixed(1)}%**`}; }
+  if(mode==='d2f'){ const s=num(n/d); const p=(s.split('.')[1]||'').length; const top=Math.round(n/d*10**p);
+    return {prompt:`${s} as a fraction`, text:true, kind:'frac', strict:true, ans:f,
+      method:`${s} = [${top}/${10**p}] → divide by ${gcd(top,10**p)} → **${fm(f)}**`}; }
+  const pc=100*n/d, ps=num(pc), p=(ps.split('.')[1]||'').length, top=Math.round(pc*10**p), bot=100*10**p;
+  return {prompt:`${ps}% as a fraction`, text:true, kind:'frac', strict:true, ans:f,
+    method:`${ps}% = [${top}/${bot}] → divide by ${gcd(top,bot)} → **${fm(f)}**`};
+};
+const BENCH = {50:[1,2],25:[1,4],75:[3,4],20:[1,5],40:[2,5],60:[3,5],12.5:[1,8],37.5:[3,8],62.5:[5,8],2.5:[1,40],0.5:[1,200],120:[6,5],175:[7,4],150:[3,2]};
+function pctMethod(p,b){
+  const ans=p*b/100;
+  if(BENCH[p]){ const [x,y]=BENCH[p]; return `${num(p)}% = [${x}/${y}] → ${b} × [${x}/${y}] = **${num(ans)}**`; }
+  const T=Math.floor(p/10)*10, U=Number((p-T).toFixed(4)), ten=b/10, parts=[];
+  if(T) parts.push(`${T}% = ${T/10} × ${num(ten)} = ${num(ten*T/10)}`);
+  if(U) parts.push(U===5?`5% = half of 10% = ${num(ten/2)}`:`${num(U)}% = ${num(U)} × 1% = ${num(U)} × ${num(b/100)} = ${num(U*b/100)}`);
+  return `10% of ${b} = ${num(ten)}; ${parts.join('; ')} → **${num(ans)}**`;
+}
+G.pct = L => {
+  if(L===1){ const p=pick([10,20,25,50,75,5,30]); const b=R(1,40)*20; return {prompt:`${p}% of ${b}`, kind:'num', ans:p*b/100, method:pctMethod(p,b)}; }
+  if(L===2){ const p=pick([15,35,12.5,40,60,45,2.5,120,65]); const b=R(2,40)*40; return {prompt:`${num(p)}% of ${b}`, kind:'num', ans:p*b/100, method:pctMethod(p,b)}; }
+  if(Math.random()<.35){ const p=pick([12.5,20,25,37.5,40,62.5,75,150,120]); const [x,y]=BENCH[p]; const b=R(2,30)*y*(y>10?1:2); const A=p*b/100;
+    return {prompt:`${num(A)} is ${num(p)}% of what number?`, text:true, kind:'num', ans:b, method:`${num(p)}% = [${x}/${y}] → ${num(A)} × [${y}/${x}] = **${b}**`, traps:[{v:A*p/100,tag:'Reciprocal'}]}; }
+  const p=pick([17,23,0.5,37.5,175,8,62.5,85,4.5]); const b=R(12,90)*10; return {prompt:`${num(p)}% of ${b}`, kind:'num', ans:Number((p*b/100).toFixed(4)), method:pctMethod(p,b)};
+};
+G.pchg = L => {
+  if(L<3){
+    for(let t=0;t<200;t++){
+      const old = L===1?pick([20,40,50,80,100,200,400,60]):R(2,40)*10;
+      const p = L===1?pick([10,20,25,50]):pick([5,12.5,15,20,25,30,40,60,75,150]);
+      const s = pick([1,-1]); const nw = old*(1+s*p/100);
+      if(!Number.isInteger(nw)||nw<=0) continue;
+      const ch=nw-old;
+      return {prompt:`Percent change from ${old} to ${nw}? (− for a decrease)`, text:true, kind:'num', ans:s*p,
+        method:`Change ÷ original = ${num(ch)} ÷ ${old} = ${num(ch/old)} → **${num(s*p)}%**`,
+        traps:[{v:ch/nw*100, tag:'Wrong base'}]};
+    }
+  }
+  if(Math.random()<.5){ const a=pick([10,20,25,30,40,50]), b=pick([10,20,25,30,40,50]); const up=pick([true,false]);
+    const f1=up?1+a/100:1-a/100, f2=up?1-b/100:1+b/100, ans=Number(((f1*f2-1)*100).toFixed(4));
+    return {prompt:`A price ${up?'rises':'falls'} ${a}%, then ${up?'falls':'rises'} ${b}%. Net percent change? (− for a decrease)`, text:true, kind:'num', ans,
+      method:`Multiply the factors: ${num(f1)} × ${num(f2)} = ${num(f1*f2)} → **${num(ans)}%**`, traps:[{v:up?a-b:b-a, tag:'Added the percents'}]}; }
+  const p=pick([10,20,25,40,12.5,15,30]); const orig=R(4,40)*(p===12.5?8:p===15?20:10); const nw=orig*(1-p/100);
+  return {prompt:`After a ${num(p)}% discount, a jacket costs ${num(nw)}. Original price?`, text:true, kind:'num', ans:orig,
+    method:`${num(nw)} = ${num(1-p/100)} × original → ${num(nw)} ÷ ${num(1-p/100)} = **${orig}**`, traps:[{v:nw*(1+p/100), tag:'Wrong base'}]};
+};
+function sqMethod(n){
+  if(n%10===5){ const a=(n-5)/10; return `${a} × ${a+1} = ${a*(a+1)}, append 25 → **${n*n}**`; }
+  const B=Math.round(n/10)*10, b=n-B; if(b===0||B===0) return `**${n*n}**`;
+  return `(${B} ${b>0?'+':'−'} ${Math.abs(b)})^{2} = ${B*B} ${b>0?'+':'−'} ${2*B*Math.abs(b)} + ${b*b} = **${n*n}**`;
+}
+G.sq = L => {
+  if(L===3&&Math.random()<.3){ const [i,p]=pick([[R(11,25),1],[R(2,9),1],[R(11,19),2],[R(2,9),2]]); const ans=Number(((i*i)/10**(2*p)).toFixed(2*p));
+    return {prompt:`${dstr(i,p)}^{2}`, kind:'num', ans, method:`${i}^{2} = ${i*i}; decimal places double to ${2*p} → **${num(ans)}**`}; }
+  const n = L===1?R(2,15):L===2?R(16,35):R(36,99);
+  return {prompt:`${n}^{2}`, kind:'num', ans:n*n, method:L===1?`${n} × ${n} = **${n*n}** (know 1–20² by heart)`:sqMethod(n)};
+};
+const LAST = {0:'0',1:'1 or 9',4:'2 or 8',5:'5',6:'4 or 6',9:'3 or 7'};
+G.root = L => {
+  if(L===1){ const n=R(2,15); return {prompt:`√${n*n}`, kind:'num', ans:n, method:`${n}^{2} = ${n*n} → **${n}**`}; }
+  if(L===2){ if(Math.random()<.35){ const [i,p]=pick([[R(2,9),1],[R(2,9),2],[R(11,15),1]]); const v=dstr(i*i,2*p);
+      return {prompt:`√${v}`, kind:'num', ans:Number(dstr(i,p).replace('−','-')), method:`√${i*i} = ${i}; halve the ${2*p} decimal places → **${dstr(i,p)}**`}; }
+    const n=R(16,30); return {prompt:`√${n*n}`, kind:'num', ans:n, method:`${n}^{2} = ${n*n} → **${n}**`}; }
+  if(Math.random()<.4){ const n=R(2,12); return {prompt:`∛${n**3}`, kind:'num', ans:n, method:`${n}^{3} = ${n**3} → **${n}**`}; }
+  const n=R(31,99), N=n*n, t=Math.floor(n/10)*10;
+  return {prompt:`√${N}`, kind:'num', ans:n, method:`${t}^{2} = ${t*t}, ${t+10}^{2} = ${(t+10)**2} → between ${t} and ${t+10}; ends in ${N%10} → root ends in ${LAST[N%10]}; ${t+5}^{2} = ${(t+5)**2} → **${n}**`};
+};
+G.pow = L => {
+  if(L===1){ const [b,e]=pick([[2,R(2,10)],[3,R(2,5)],[4,R(2,4)],[5,R(2,4)],[6,2],[6,3],[R(2,9),0],[10,R(2,6)]]);
+    return {prompt:`${b}^{${e}}`, kind:'num', ans:b**e, method: e===0?'Anything (non-zero) to the power 0 is **1**':`${Array(e).fill(b).join(' × ')} = **${b**e}**`}; }
+  if(L===2){ const t=R(1,4);
+    if(t===1){ const a=R(2,9),b=R(2,9),c=R(1,6); return {prompt:`2^{${a}} × 2^{${b}} ÷ 2^{${c}} = 2^{?}`, kind:'num', ans:a+b-c, method:`Same base: ${a} + ${b} − ${c} = **${a+b-c}**`}; }
+    if(t===2){ const a=R(2,6),b=R(2,5); return {prompt:`4^{${a}} × 8^{${b}} = 2^{?}`, kind:'num', ans:2*a+3*b, method:`4 = 2^{2}, 8 = 2^{3} → 2^{${2*a}} × 2^{${3*b}} → **${2*a+3*b}**`}; }
+    if(t===3){ const [b,k]=pick([[2,R(1,5)],[3,R(1,3)],[4,R(1,3)],[5,R(1,3)],[10,R(1,3)]]);
+      return {prompt:`${b}^{−${k}}`, kind:'frac', ans:{n:1,d:b**k}, method:`Negative exponent = reciprocal: 1 ÷ ${b}^{${k}} = **[1/${b**k}]**`, traps:[{v:-(b**k),tag:'Sign error'},{v:b**k,tag:'Reciprocal'}]}; }
+    const a=R(2,6),b=R(2,5); return {prompt:`(3^{${a}})^{${b}} = 3^{?}`, kind:'num', ans:a*b, method:`Power of a power multiplies: ${a} × ${b} = **${a*b}**`, traps:[{v:a+b,tag:'Calculation error'}]};
+  }
+  const t=R(1,3);
+  if(t===1){ const a=R(2,6),b=R(1,4),c=R(1,8); return {prompt:`9^{${a}} × 27^{${b}} ÷ 3^{${c}} = 3^{?}`, kind:'num', ans:2*a+3*b-c, method:`9 = 3^{2}, 27 = 3^{3} → ${2*a} + ${3*b} − ${c} = **${2*a+3*b-c}**`}; }
+  if(t===2){ const [b,p,q]=pick([[8,2,3],[27,2,3],[16,3,4],[64,2,3],[32,3,5],[25,3,2],[4,5,2],[81,3,4],[125,2,3],[9,3,2],[16,3,2]]);
+    const r=Math.round(b**(1/q)), ans=r**p; const root=q===2?'square':q===3?'cube':q+'th';
+    return {prompt:`${b}^{${p}/${q}}`, kind:'num', ans, method:`Take the ${root} root first: ${r}; then ${r}^{${p}} = **${ans}**`}; }
+  const n=R(3,12), k=pick([2,3]); const base=k;
+  return {prompt:`${Array(k).fill(`${base}^{${n}}`).join(' + ')} = ${base}^{?}`, kind:'num', ans:n+1,
+    method:`${k} copies of ${base}^{${n}} = ${k} × ${base}^{${n}} = ${base}^{1} × ${base}^{${n}} → **${n+1}**`, traps:[{v:k*n,tag:'Calculation error'}]};
+};
+function gcdLcmMethod(nums, which){
+  const facs=nums.map(factorize); const primes=[...new Set(facs.flat().map(x=>x[0]))].sort((a,b)=>a-b);
+  const pw=(f,p)=>(f.find(x=>x[0]===p)||[p,0])[1];
+  const pieces=[]; let val=1;
+  primes.forEach(p=>{ const es=facs.map(f=>pw(f,p)); const e=which==='GCD'?Math.min(...es):Math.max(...es); if(e>0){pieces.push(e>1?`${p}^{${e}}`:`${p}`); val*=p**e;} });
+  const fs=nums.map((n,i)=>`${n} = ${fstr(facs[i])}`).join(', ');
+  return `${fs}. ${which==='GCD'?'Shared primes, lowest power':'Every prime, highest power'}: ${pieces.join(' · ')||'1'} = **${val}**`;
+}
+G.gcd = L => {
+  let nums;
+  if(L===1){ const g=R(2,12); let x,y; do{x=R(1,6);y=R(2,7)}while(x===y||gcd(x,y)!==1); nums=[g*x,g*y]; }
+  else if(L===2){ const g=R(4,30); let x,y; do{x=R(2,9);y=R(2,9)}while(x===y||gcd(x,y)!==1); nums=[g*x,g*y]; }
+  else { const g=R(2,8); const s=new Set(); while(s.size<3) s.add(g*R(2,12)); nums=[...s]; }
+  const which=pick(['GCD','LCM']);
+  const G_=nums.reduce(gcd), L_=nums.reduce(lcm), P=nums.reduce((a,b)=>a*b,1);
+  const traps=[{v:which==='GCD'?L_:G_, tag:'GCD / LCM mix-up'}]; if(which==='LCM'&&P!==L_) traps.push({v:P,tag:'Multiplied instead of LCM'});
+  return {prompt:`${which}(${nums.join(', ')})`, kind:'num', ans:which==='GCD'?G_:L_, method:gcdLcmMethod(nums,which), traps};
+};
+G.prime = L => {
+  const [lo,hi,ps] = L===1?[12,100,[2,3,5,7]]:L===2?[100,1000,[2,3,5,7,11,13]]:[1000,10000,[2,3,5,7,11,13,17,19,23]];
+  let N; for(let t=0;t<500;t++){ N=1; while(N<lo) N*=pick(ps); if(N<=hi && !isPrime(N)) break; }
+  const chain=[]; let m=N; for(const [p,e] of factorize(N)) for(let i=0;i<e;i++){ chain.push(`${m} ÷ ${p}`); m/=p; }
+  return {prompt:`Prime factorisation of ${N}`, text:true, kind:'factor', ans:factorize(N), N,
+    method:`${chain.join(' → ')} → 1. So ${N} = **${fstr(factorize(N))}**`};
+};
+function divRule(N,k){
+  const ds=String(N), sum=[...ds].reduce((a,c)=>a+ +c,0);
+  const alt=[...ds].reverse().reduce((a,c,i)=>a+(i%2?-(+c):+c),0);
+  const l2=N%100, l3=N%1000;
+  const is=(b)=>b?'is':'is not';
+  const R_={
+    2:()=>`last digit ${N%10} ${is(N%2===0)} even`,
+    3:()=>`digit sum ${sum} ${is(sum%3===0)} a multiple of 3`,
+    4:()=>`last two digits ${String(l2).padStart(2,'0')} ${is(l2%4===0)} divisible by 4`,
+    5:()=>`last digit ${N%10} ${N%5===0?'is':'is not'} 0 or 5`,
+    8:()=>`last three digits ${String(l3).padStart(3,'0')} ${is(l3%8===0)} divisible by 8`,
+    9:()=>`digit sum ${sum} ${is(sum%9===0)} a multiple of 9`,
+    10:()=>`last digit ${N%10} ${is(N%10===0)} 0`,
+    11:()=>`alternating digit sum ${alt} ${is(alt%11===0)} a multiple of 11`,
+    7:()=>{ let x=N, steps=[]; while(Math.abs(x)>=70){ const nx=Math.floor(x/10)-2*(x%10); steps.push(`${Math.floor(x/10)} − ${2*(x%10)} = ${nx}`); x=nx; } return `double the last digit and subtract: ${steps.join('; ')}; ${x} ${is(x%7===0)} a multiple of 7`; },
+  };
+  const comp={6:[2,3],12:[3,4],15:[3,5],18:[2,9],24:[3,8],36:[4,9]};
+  const body = comp[k] ? `${k} = ${comp[k][0]} × ${comp[k][1]} (coprime), need both: ${R_[comp[k][0]]()}; ${R_[comp[k][1]]()}` : R_[k]()[0].toUpperCase()+R_[k]().slice(1);
+  return `${body} → **${N%k===0?'Yes':'No'}**`;
+}
+G.divis = L => {
+  const k = pick(L===1?[2,3,4,5,9,10]:L===2?[6,8,11,12,15]:[7,11,12,18,24,36]);
+  const [lo,hi] = L===1?[100,999]:L===2?[1000,9999]:[10000,99999];
+  let N; const want=Math.random()<.5;
+  do{ N = want ? k*R(Math.ceil(lo/k),Math.floor(hi/k)) : R(lo,hi); }while(!want && N%k===0);
+  return {prompt:`Is ${N} divisible by ${k}?`, text:true, kind:'choice', choices:['Yes','No'], ans:N%k===0?0:1, method:divRule(N,k), wrongTag:'Divisibility rule'};
+};
+G.nfac = L => {
+  const [lo,hi] = L===1?[12,60]:L===2?[60,400]:[400,5000];
+  let N,f; do{ N=R(lo,hi); f=factorize(N); }while(f.length<(L===1?1:2) || isPrime(N) || (L===3&&f.reduce((a,[,e])=>a*(e+1),1)<12));
+  const ans=f.reduce((a,[,e])=>a*(e+1),1), noPlus=f.reduce((a,[,e])=>a*e,1);
+  return {prompt:`How many positive factors does ${N} have?`, text:true, kind:'num', ans,
+    method:`${N} = ${fstr(f)} → ${f.map(([,e])=>`(${e}+1)`).join('')} = **${ans}**`, traps: noPlus!==ans?[{v:noPlus,tag:'Forgot the +1'}]:[]};
+};
+function makeQ(cat,L){ for(let i=0;i<400;i++){ const q=G[cat](L); if(q){ q.cat=cat; q.lvl=L; return q; } } const q=makeQ(cat,Math.max(1,L-1)); q.lvl=L; return q; }
+
+/* ---------- checking ---------- */
+function parseAns(raw){
+  let s = raw.trim().replace(/[−–—]/g,'-').replace(/,/g,'.').replace(/%/g,'').replace(/^\+/,'').replace(/\s+/g,' ').trim();
+  if(!s) return null;
+  let m = s.match(/^(-?)(\d+) (\d+)\/(\d+)$/);
+  if(m){ const w=+m[2],n=+m[3],d=+m[4]; if(!d) return null; const sg=m[1]?-1:1; return {v:sg*(w+n/d), n:sg*(w*d+n), d, isFrac:true, whole:true}; }
+  s = s.replace(/ /g,'');
+  m = s.match(/^(-?\d*\.?\d+)\/(-?\d*\.?\d+)$/);
+  if(m){ const a=+m[1], b=+m[2]; if(!b) return null; return {v:a/b, n:a, d:b, isFrac:true, whole:Number.isInteger(a)&&Number.isInteger(b)}; }
+  if(/^-?(\d+\.?\d*|\.\d+)$/.test(s)) return {v:+s, isFrac:false};
+  return null;
+}
+const close = (a,b) => Math.abs(a-b) <= 1e-9*Math.max(1,Math.abs(b));
+function classify(q,u,v){
+  for(const t of (q.traps||[])) if(close(u,t.v) && !close(u,v)) return t.tag;
+  if(v!==0 && close(u,-v)) return 'Sign error';
+  if(v!==0 && u!==0){ const r=u/v, lg=Math.log10(Math.abs(r)); if(r>0 && Math.abs(lg-Math.round(lg))<1e-9 && Math.round(lg)!==0) return 'Decimal place'; }
+  if(v!==0 && close(u,1/v)) return 'Reciprocal';
+  const d=Math.abs(u-v);
+  if(Number.isInteger(u)&&Number.isInteger(v)&&[1,2,10,20,100,200,1000].includes(Math.round(d))) return 'Carry / borrow slip';
+  if(v!==0 && d/Math.abs(v)<0.05) return 'Close but off';
+  return 'Calculation error';
+}
+function check(q, raw){
+  if(q.kind==='choice') return raw===q.ans ? {ok:true} : {ok:false, tag:q.wrongTag};
+  if(q.kind==='factor'){
+    const toks=[...raw.matchAll(/(\d+)\s*(?:\^\s*(\d+))?/g)];
+    if(!toks.length) return {invalid:true};
+    const map={}; let prod=1;
+    toks.forEach(t=>{ const p=+t[1], e=t[2]?+t[2]:1; map[p]=(map[p]||0)+e; prod*=p**e; });
+    const want=Object.fromEntries(q.ans);
+    const same = Object.keys(map).length===Object.keys(want).length && Object.keys(want).every(p=>map[p]===want[p]);
+    if(same) return {ok:true};
+    if(prod===q.N) return {ok:false, tag:'Composite factor left'};
+    return {ok:false, tag:'Calculation error'};
+  }
+  const u=parseAns(raw); if(!u) return {invalid:true};
+  const v = q.kind==='frac' ? q.ans.n/q.ans.d : q.ans;
+  if(q.kind==='approx') return Math.abs(u.v-v)<=q.tol ? {ok:true} : {ok:false, tag:classify(q,u.v,v)};
+  if(!close(u.v,v)) return {ok:false, tag:classify(q,u.v,v)};
+  if(q.kind==='frac'){
+    if(u.isFrac && (!u.whole || gcd(u.n,u.d)!==1) && !(u.whole && Math.abs(u.d)===1)) return {ok:false, tag:'Not fully simplified'};
+    if(q.strict && !u.isFrac && q.ans.d!==1) return {ok:false, tag:'Answered as a decimal'};
+  }
+  return {ok:true};
+}
+function ansMarkup(q){
+  if(q.kind==='frac') return fm(q.ans);
+  if(q.kind==='choice') return q.choices[q.ans];
+  if(q.kind==='factor') return fstr(q.ans);
+  if(q.kind==='approx') return '≈ '+q.ans.toFixed(q.round)+(q.unit||'');
+  return num(q.ans)+(q.unit||'');
+}
+
+/* ---------- storage ---------- */
+const empty = () => ({v:1, days:{}, cats:{}, tags:{}, tagsByCat:{}, mistakes:[], sessions:[]});
+let P = empty();
+let ref = null;
+const LS_KEY='gmm-progress-v1', LS_SET='gmm-settings-v1';
+function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function normalize(d){ const e=empty(); const o=Object.assign(e, JSON.parse(JSON.stringify(d||{}))); return o; }
+{ const cached=lsGet(LS_KEY); if(cached) P=normalize(cached); }
+
+async function initStore(){
+  let db=null;
+  try{ db = window.claude && window.claude.use ? await window.claude.use('db') : null; }catch(e){ db=null; }
+  if(!db){ if(window.claude) $('#storeNote').hidden=false; return; }
+  ref = db.doc('progress/main');
+  let first=true;
+  ref.onSnapshot(snap=>{
+    if(snap.exists){ P = normalize(snap.data()); lsSet(LS_KEY,P); }
+    else if(first){ const local=lsGet(LS_KEY); if(local && (local.sessions||[]).length){ P=normalize(local); save(); } }
+    first=false; renderStatic();
+  }, err=>{ $('#storeNote').hidden=false; ref=null; });
+}
+let saving=Promise.resolve();
+function save(){
+  lsSet(LS_KEY,P);
+  if(!ref) return;
+  const body=JSON.parse(JSON.stringify(P));
+  saving = saving.then(()=>ref.set(body)).catch(async e=>{
+    if(e && e.code==='unavailable'){ await new Promise(r=>setTimeout(r,800+Math.random()*800)); try{ await ref.set(body); }catch(_){} }
+  });
+}
+
+/* ---------- streak ---------- */
+function streakInfo(){
+  const t=todayKey(), done=k=>P.days[k] && P.days[k].s>0;
+  const doneToday=done(t); let cur=0, k=doneToday?t:addDays(t,-1);
+  while(done(k)){ cur++; k=addDays(k,-1); }
+  const keys=Object.keys(P.days).filter(done).sort(); let best=0, run=0, prev=null;
+  keys.forEach(x=>{ run = (prev && addDays(prev,1)===x) ? run+1 : 1; best=Math.max(best,run); prev=x; });
+  return {cur, best, doneToday};
+}
+function renderStreak(){
+  const s=streakInfo(), t=todayKey();
+  let dots=''; for(let i=6;i>=0;i--){ const k=addDays(t,-i); const on=P.days[k]&&P.days[k].s>0; dots+=`<i class="${on?'on':''} ${i===0?'today':''}" title="${k}${on?' · done':''}"></i>`; }
+  const status = s.doneToday ? `<span class="status ok">Done today</span>` : s.cur>0 ? `<span class="status risk">Train today to keep it</span>` : `<span class="status">Start a streak today</span>`;
+  $('#streak').innerHTML = `<div class="big">${s.cur}</div><div class="meta">day streak · best ${s.best}<br>${status}<div class="week">${dots}</div></div>`;
+}
+
+/* ---------- settings ---------- */
+const settings = Object.assign({cats:CATS.filter(c=>c.g==='Fractions').map(c=>c.id), lvl:2, len:'q20'}, lsGet(LS_SET)||{});
+settings.cats = settings.cats.filter(id=>CAT[id]);
+const saveSettings = () => lsSet(LS_SET, settings);
+
+function catAcc(id){ const c=P.cats[id]; if(!c||!c.recent||!c.recent.length) return null; return Math.round(100*c.recent.reduce((a,r)=>a+r[0],0)/c.recent.length); }
+function renderSetup(){
+  $('#groups').innerHTML = GROUPS.map(g=>{
+    const cs=CATS.filter(c=>c.g===g);
+    return `<div><div class="grp-head"><span class="label">${g}</span><button class="linkbtn" data-grp="${g}">${cs.every(c=>settings.cats.includes(c.id))?'Clear group':'Select group'}</button></div>
+      <div class="chips">${cs.map(c=>{ const a=catAcc(c.id); return `<button class="chip" data-cat="${c.id}" aria-pressed="${settings.cats.includes(c.id)}">${c.name}${a!==null?`<small>${a}%</small>`:''}</button>`; }).join('')}</div></div>`;
+  }).join('');
+  document.querySelectorAll('#lvlSeg button').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===settings.lvl));
+  document.querySelectorAll('#lenSeg button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===settings.len));
+  $('#lvlHint').textContent = LVL_HINT[settings.lvl];
+  $('#startBtn').disabled = !settings.cats.length;
+  $('#startBtn').textContent = settings.cats.length ? `Start session · ${settings.cats.length} topic${settings.cats.length>1?'s':''}` : 'Pick at least one topic';
+  $('#weakBtn').hidden = !recommendations().length;
+}
+$('#groups').addEventListener('click', e=>{
+  const c=e.target.closest('[data-cat]'), g=e.target.closest('[data-grp]');
+  if(c){ const id=c.dataset.cat; settings.cats = settings.cats.includes(id) ? settings.cats.filter(x=>x!==id) : [...settings.cats,id]; }
+  else if(g){ const ids=CATS.filter(x=>x.g===g.dataset.grp).map(x=>x.id); const all=ids.every(id=>settings.cats.includes(id));
+    settings.cats = all ? settings.cats.filter(x=>!ids.includes(x)) : [...new Set([...settings.cats,...ids])]; }
+  else return;
+  saveSettings(); renderSetup();
+});
+$('#selAll').onclick=()=>{ settings.cats=CATS.map(c=>c.id); saveSettings(); renderSetup(); };
+$('#selNone').onclick=()=>{ settings.cats=[]; saveSettings(); renderSetup(); };
+$('#lvlSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; settings.lvl=+b.dataset.v; saveSettings(); renderSetup(); };
+$('#lenSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; settings.len=b.dataset.v; saveSettings(); renderSetup(); };
+
+/* ---------- session ---------- */
+let S=null, tick=null;
+function startSession(cats, lvl, len){
+  const mode=len[0]==='t'?'time':'count', amount=+len.slice(1);
+  S={cats:[...cats], lvl, mode, total: mode==='count'?amount:null, endAt: mode==='time'?Date.now()+amount*60000:null, len, results:[], q:null, qStart:0, waiting:false, last:null};
+  $('#setup').hidden=true; $('#done').hidden=true; $('#run').hidden=false;
+  nextQ();
+  clearInterval(tick); tick=setInterval(onTick,100);
+}
+function nextQ(){
+  if(S.mode==='count' && S.results.length>=S.total) return finish();
+  if(S.mode==='time' && Date.now()>=S.endAt) return finish();
+  let pool=S.cats.length>1?S.cats.filter(c=>c!==S.last):S.cats;
+  const cat=pick(pool); S.last=cat;
+  S.q=makeQ(cat,S.lvl); S.waiting=false; S.qStart=Date.now(); S.qid=(S.qid||0)+1;
+  renderQ();
+}
+function renderQ(){
+  const q=S.q;
+  $('#qCat').textContent=catLabel(q.cat);
+  $('#qLvl').textContent=LVL[q.lvl];
+  const pr=$('#qPrompt'); pr.className='prompt'+(q.text?' text':''); pr.innerHTML=fmt(q.prompt);
+  $('#fb').innerHTML=''; $('#fb').className='';
+  const box=$('#qInput');
+  if(q.kind==='choice'){
+    box.innerHTML=`<div class="choices">${q.choices.map((c,i)=>`<button class="choice" data-i="${i}"><kbd>${i+1}</kbd>${fmt(c)}</button>`).join('')}</div>`;
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  } else {
+    const ph = q.kind==='factor'?'e.g. 2^3 × 3 × 5' : q.kind==='frac'?'e.g. 3/4' : q.unit?'answer in %':'answer';
+    const keys = q.kind==='factor'?['^','×']:['/','−','.'];
+    box.innerHTML=`<form class="ansrow" id="ansForm" autocomplete="off"><input id="ans" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${ph}" aria-label="Your answer"><button class="primary" type="submit">Check</button></form>
+      <div class="keys">${keys.map(k=>`<button type="button" data-k="${k}">${k}</button>`).join('')}</div>`;
+    const inp=$('#ans'); inp.focus({preventScroll:true});
+    $('#ansForm').onsubmit=e=>{ e.preventDefault(); submit(inp.value); };
+    box.querySelector('.keys').onclick=e=>{ const b=e.target.closest('[data-k]'); if(!b) return; const k=b.dataset.k==='−'?'-':b.dataset.k==='×'?' × ':b.dataset.k;
+      const s=inp.selectionStart??inp.value.length; inp.value=inp.value.slice(0,s)+k+inp.value.slice(inp.selectionEnd??s); inp.focus(); inp.setSelectionRange(s+k.length,s+k.length); };
+  }
+  box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>submit(+b.dataset.i));
+  renderRunbar();
+}
+function renderRunbar(){
+  const n=S.results.length, c=S.results.filter(r=>r.ok).length;
+  $('#runScore').textContent = n ? `${c}/${n} correct` : '';
+  if(S.mode==='count'){ $('#runLeft').textContent=`Question ${Math.min(n+1,S.total)} of ${S.total}`; $('#runProg').style.width=(100*n/S.total)+'%'; }
+}
+function onTick(){
+  if(!S) return;
+  if(S.mode==='time'){ const left=Math.max(0,S.endAt-Date.now()); const m=Math.floor(left/60000), s=Math.floor(left/1000)%60;
+    $('#runLeft').textContent=`${m}:${String(s).padStart(2,'0')} left`; const tot=+S.len.slice(1)*60000; $('#runProg').style.width=(100*(1-left/tot))+'%';
+    if(left<=0 && !S.waiting){ return finish(); } }
+  if(!S.waiting && S.q){ const tgt=CAT[S.q.cat].t[S.q.lvl-1]*1000, el=Date.now()-S.qStart;
+    const c=$('#clock'); c.classList.toggle('over', el>tgt); c.firstElementChild.style.width=Math.min(100,100*el/tgt)+'%'; }
+}
+function submit(raw){
+  if(!S||S.waiting) return;
+  const q=S.q, res=check(q,raw);
+  if(res.invalid){ $('#fb').className='fb no'; $('#fb').innerHTML=`<div>${q.kind==='factor'?'Type primes separated by × or spaces, e.g. 2^3 × 3 × 5.':'Type a number like 12, −3.5 or 3/4.'}</div>`; return; }
+  record(q, raw, res.ok, res.tag);
+}
+function record(q, raw, ok, tag){
+  const ms=Date.now()-S.qStart; const tgt=CAT[q.cat].t[q.lvl-1]*1000;
+  const user = q.kind==='choice' ? (raw===null?'—':q.choices[raw]) : (raw===null?'—':String(raw).trim());
+  S.results.push({cat:q.cat, lvl:q.lvl, ok, ms, tag:ok?null:tag, p:q.prompt, a:user, r:ansMarkup(q), m:q.method, slow:ok&&ms>tgt});
+  S.waiting=true;
+  const inp=$('#ans'); if(inp) inp.disabled=true;
+  document.querySelectorAll('.choice').forEach(b=>{ b.disabled=true; const i=+b.dataset.i; if(i===q.ans) b.classList.add('right'); else if(i===raw) b.classList.add('wrong'); });
+  const fb=$('#fb');
+  if(ok){
+    fb.className='fb ok';
+    fb.innerHTML=`<div class="v">Correct · ${secs(ms)}${ms>tgt?` <span class="slow">(target ${tgt/1000}s)</span>`:''}</div>${ms>tgt?`<div class="method">${fmt(q.method)}</div>`:''}`;
+    renderRunbar();
+    const id=S.qid;
+    setTimeout(()=>{ if(S && S.waiting && S.qid===id) nextQ(); }, ms>tgt?2200:650);
+  } else {
+    fb.className='fb no';
+    fb.innerHTML=`<div class="v">${raw===null?'Skipped':'Not quite'} · answer ${fmt(ansMarkup(q))} ${tag&&raw!==null?`<span class="tagpill">${tag}</span>`:''}</div>
+      <div class="method">${fmt(q.method)}</div><div><button class="primary" id="nextBtn">Next (Enter)</button></div>`;
+    renderRunbar();
+    $('#nextBtn').onclick=()=>nextQ(); $('#nextBtn').focus({preventScroll:true});
+  }
+}
+document.addEventListener('keydown', e=>{
+  if(!S || $('#run').hidden) return;
+  if(S.waiting && e.key==='Enter' && document.activeElement?.id!=='nextBtn'){ e.preventDefault(); nextQ(); return; }
+  if(!S.waiting && S.q && S.q.kind==='choice'){
+    const k=e.key.toLowerCase(); let i=null;
+    if(/^[1-3]$/.test(k)) i=+k-1; if(S.q.choices[0]==='Yes'){ if(k==='y') i=0; if(k==='n') i=1; }
+    if(i!==null && i<S.q.choices.length){ e.preventDefault(); submit(i); }
+  }
+});
+$('#skipBtn').onclick=()=>{ if(S && !S.waiting) record(S.q, null, false, 'Skipped'); else if(S) nextQ(); };
+$('#endBtn').onclick=()=>finish();
+
+function finish(){
+  clearInterval(tick);
+  const r=S.results; const sess=S; S=null;
+  $('#run').hidden=true;
+  if(!r.length){ $('#setup').hidden=false; renderSetup(); return; }
+  const n=r.length, c=r.filter(x=>x.ok).length, ms=r.reduce((a,x)=>a+x.ms,0), qual=n>=5;
+  const before=streakInfo();
+  const t=todayKey(); const d=P.days[t]||{n:0,c:0,ms:0,s:0};
+  P.days[t]={n:d.n+n, c:d.c+c, ms:d.ms+ms, s:d.s+(qual?1:0)};
+  r.forEach(x=>{
+    const cs=P.cats[x.cat]||(P.cats[x.cat]={n:0,c:0,ms:0,slow:0,recent:[]});
+    cs.n++; cs.c+=x.ok?1:0; cs.ms+=x.ms; cs.slow+=x.slow?1:0; cs.recent.push([x.ok?1:0, x.ms, x.lvl]); if(cs.recent.length>40) cs.recent.splice(0,cs.recent.length-40);
+    if(!x.ok){ P.tags[x.tag]=(P.tags[x.tag]||0)+1; const tb=P.tagsByCat[x.cat]||(P.tagsByCat[x.cat]={}); tb[x.tag]=(tb[x.tag]||0)+1;
+      P.mistakes.unshift({t:Date.now(), cat:x.cat, lvl:x.lvl, p:x.p, a:x.a, r:x.r, tag:x.tag, m:x.m}); }
+  });
+  if(P.mistakes.length>60) P.mistakes.length=60;
+  P.sessions.push({t:Date.now(), day:t, n, c, ms, lvl:sess.lvl, cats:sess.cats.length}); if(P.sessions.length>80) P.sessions.splice(0,P.sessions.length-80);
+  save();
+  const after=streakInfo();
+  const wrong=r.filter(x=>!x.ok);
+  const slow=r.filter(x=>x.slow).length;
+  const streakMsg = !qual ? `Answer at least 5 questions in one session to count today for your streak.`
+    : (!before.doneToday ? `Today counts. Streak: <b>${after.cur} day${after.cur>1?'s':''}</b>.` : `Streak: <b>${after.cur} day${after.cur>1?'s':''}</b>, today already counted.`);
+  const drillCats=[...new Set(wrong.map(x=>x.cat))];
+  $('#done').innerHTML=`
+    <div class="res-head"><div class="score">${Math.round(100*c/n)}%</div>
+      <div><div><b>${c}</b> of ${n} correct · ${secs(ms/n)} per question${slow?` · <span class="slow">${slow} correct but slow</span>`:''}</div><div class="hint" style="margin:2px 0 0">${streakMsg}</div></div></div>
+    <div class="row"><button class="primary" id="againBtn">Same again</button>${drillCats.length?`<button class="ghost" id="drillBtn">Drill what I missed</button>`:''}<button class="ghost" id="backBtn">Change settings</button></div>
+    ${wrong.length?`<h2 style="font-size:19px;margin-top:26px">Mistakes to review</h2><div class="res-list">${wrong.map(mistakeCard).join('')}</div>`:`<p class="hint" style="font-size:14px">No mistakes. Try a harder level or a timed round.</p>`}`;
+  $('#done').hidden=false;
+  $('#againBtn').onclick=()=>startSession(sess.cats, sess.lvl, sess.len);
+  $('#backBtn').onclick=()=>{ $('#done').hidden=true; $('#setup').hidden=false; renderSetup(); };
+  if(drillCats.length) $('#drillBtn').onclick=()=>startSession(drillCats, sess.lvl, 'q20');
+  renderStatic();
+}
+function mistakeCard(x){
+  return `<div class="mist"><div class="label">${catLabel(x.cat)} · ${LVL[x.lvl]}</div><div class="p">${fmt(x.p)}</div>
+    <div class="line">You: <span class="x">${esc(x.a)}</span> · Answer: <span class="r">${fmt(x.r)}</span> ${x.tag?`<span class="tagpill">${x.tag}</span>`:''}</div>
+    ${x.m?`<div class="line">${fmt(x.m)}</div>`:''}</div>`;
+}
+$('#startBtn').onclick=()=>startSession(settings.cats, settings.lvl, settings.len);
+$('#weakBtn').onclick=()=>{ const r=recommendations(); if(r.length) startSession(r.map(x=>x.id), settings.lvl, 'q20'); };
+
+/* ---------- analytics ---------- */
+function catStats(id){
+  const c=P.cats[id]; if(!c||!c.recent.length) return null;
+  const rec=c.recent, acc=rec.reduce((a,r)=>a+r[0],0)/rec.length, avg=rec.reduce((a,r)=>a+r[1],0)/rec.length;
+  const lv=rec[rec.length-1][2]; const tgt=CAT[id].t[lv-1];
+  const ratio=avg/1000/tgt; const score=(1-acc)+Math.max(0,ratio-1)*0.35;
+  const tb=P.tagsByCat[id]||{}; const topTag=Object.entries(tb).sort((a,b)=>b[1]-a[1])[0];
+  return {id, n:c.n, recentN:rec.length, acc, avg, tgt, lv, ratio, score, topTag: topTag?topTag[0]:null};
+}
+function recommendations(){ return CATS.map(c=>catStats(c.id)).filter(s=>s&&s.recentN>=5&&s.score>0.08).sort((a,b)=>b.score-a.score).slice(0,3); }
+function renderStats(){
+  const el=$('#viewStats');
+  const s=streakInfo();
+  const totN=Object.values(P.cats).reduce((a,c)=>a+c.n,0), totC=Object.values(P.cats).reduce((a,c)=>a+c.c,0), totMs=Object.values(P.cats).reduce((a,c)=>a+c.ms,0);
+  const tiles=`<div class="tiles">
+    <div class="tile"><div class="label">Current streak</div><div class="n">${s.cur}</div></div>
+    <div class="tile"><div class="label">Best streak</div><div class="n">${s.best}</div></div>
+    <div class="tile"><div class="label">Questions</div><div class="n">${totN}</div></div>
+    <div class="tile"><div class="label">Accuracy</div><div class="n">${totN?Math.round(100*totC/totN)+'%':'—'}</div></div></div>`;
+  // heatmap
+  const t=todayKey(); const dow=(new Date(t+'T12:00:00').getDay()+6)%7; const start=addDays(t,-dow-7*15);
+  let cells=''; for(let i=0;i<16*7;i++){ const k=addDays(start,i); if(k>t){cells+='<i class="f"></i>';continue;} const d=P.days[k]; const n=d?d.n:0;
+    const l=n===0?0:n<10?1:n<25?2:n<50?3:4; cells+=`<i class="l${l} ${k===t?'today':''}" title="${k}: ${n} question${n===1?'':'s'}${d&&d.n?`, ${Math.round(100*d.c/d.n)}% correct`:''}${d&&d.s?'':' · streak not counted'}"></i>`; }
+  const heat=`<div class="sec"><h2>Activity</h2><p class="sub">Last 16 weeks, one square per day. A day keeps the streak once a session of 5+ questions is finished.</p>
+    <div class="heat" role="img" aria-label="Daily practice heatmap">${cells}</div>
+    <div class="legend">Less <i style="background:var(--h0)"></i><i style="background:var(--h1)"></i><i style="background:var(--h2)"></i><i style="background:var(--h3)"></i><i style="background:var(--h4)"></i> More</div></div>`;
+  // recs
+  const recs=recommendations();
+  const recHtml=`<div class="sec"><h2>What to study next</h2><p class="sub">Ranked by recent accuracy and speed against the target time (last 40 answers per topic).</p>
+    ${recs.length?`<div class="recs">${recs.map(r=>{ const sev=r.acc<0.6?'hi':r.acc<0.85?'mid':'lo';
+      return `<div class="rec"><div class="t"><h3>${catLabel(r.id)}</h3><span class="sev ${sev}">${Math.round(r.acc*100)}% correct</span></div>
+      <div class="why">${secs(r.avg)} average vs ${r.tgt}s target at ${LVL[r.lv]}${r.topTag?` · most common mistake: ${r.topTag}`:''}</div>
+      <div class="tip"><b>Method:</b> ${esc(CAT[r.id].tip)}</div>
+      ${r.topTag&&TAGS[r.topTag]?`<div class="why">${esc(TAGS[r.topTag])}</div>`:''}</div>`; }).join('')}</div>
+      <div class="row" style="margin-top:12px"><button class="primary" id="drillRecs">Drill these ${recs.length} topics</button></div>`
+      : `<div class="empty">${totN?'Nothing stands out yet. Answer at least 5 questions per topic, or move up a difficulty level.':'No sessions yet. Finish a session and your weak spots will show up here.'}</div>`}</div>`;
+  // table
+  const rows=CATS.map(c=>({c, s:catStats(c.id)})).sort((a,b)=>(b.s?b.s.score:-1)-(a.s?a.s.score:-1));
+  const table=`<div class="sec"><h2>By topic</h2><p class="sub">Accuracy and average time over each topic's last 40 answers; the target depends on the level you last used.</p>
+    <div class="tblwrap"><table class="tbl"><thead><tr><th>Topic</th><th>Accuracy</th><th style="text-align:right">Avg time</th><th style="text-align:right">Answered</th></tr></thead><tbody>
+    ${rows.map(({c,s})=> s ? `<tr><td>${catLabel(c.id)}</td><td><div class="bar" title="${Math.round(s.acc*100)}% of last ${s.recentN}"><div class="track"><div class="fill" style="width:${s.acc*100}%"></div></div><span class="v">${Math.round(s.acc*100)}%</span></div></td>
+      <td class="num mono ${s.ratio>1?'slow':''}">${secs(s.avg)} / ${s.tgt}s</td><td class="num mono">${s.n}</td></tr>`
+      : `<tr class="dim"><td>${catLabel(c.id)}</td><td>Not practised yet</td><td class="num">—</td><td class="num mono">0</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  // tags
+  const tagE=Object.entries(P.tags).sort((a,b)=>b[1]-a[1]); const tmax=tagE.length?tagE[0][1]:1;
+  const tagHtml=`<div class="sec"><h2>Types of mistakes</h2><p class="sub">Every wrong answer is sorted by what most likely went wrong.</p>
+    ${tagE.length?`<div class="tags">${tagE.map(([k,v])=>`<div class="tagrow"><div>${k}</div><div class="bar" title="${v} mistake${v>1?'s':''}"><div class="track"><div class="fill" style="width:${100*v/tmax}%"></div></div><span class="v">${v}</span></div><div class="desc">${esc(TAGS[k]||'')}</div></div>`).join('')}</div>`
+      :`<div class="empty">No mistakes logged yet.</div>`}</div>`;
+  // trend
+  const ss=P.sessions.slice(-30);
+  let trend='';
+  if(ss.length>=2){ const W=600,H=140,pl=34,pr=10,pt=10,pb=22; const x=i=>pl+(W-pl-pr)*i/(ss.length-1), y=v=>pt+(H-pt-pb)*(1-v);
+    const pts=ss.map((s,i)=>[x(i),y(s.c/s.n)]); const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    const area=line+` L${pts[pts.length-1][0].toFixed(1)} ${y(0)} L${pts[0][0].toFixed(1)} ${y(0)} Z`;
+    const grid=[0,.5,1].map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-width="1"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end">${v*100}%</text>`).join('');
+    const dots=ss.map((s,i)=>`<circle cx="${x(i)}" cy="${y(s.c/s.n)}" r="${i===ss.length-1?5:3.5}" fill="${i===ss.length-1?'var(--accent)':'var(--surface)'}" stroke="var(--accent)" stroke-width="2"><title>${s.day}: ${s.c}/${s.n} correct (${Math.round(100*s.c/s.n)}%), ${LVL[s.lvl]}</title></circle>`).join('');
+    trend=`<div class="sec"><h2>Accuracy by session</h2><p class="sub">Your last ${ss.length} sessions. Hover a point for details.</p>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Session accuracy trend">${grid}<path d="${area}" fill="var(--accent-soft)" opacity=".7"/><path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>${dots}
+      <text x="${pl}" y="${H-4}">oldest</text><text x="${W-pr}" y="${H-4}" text-anchor="end">latest</text></svg></div>`; }
+  // mistakes list
+  const ml=P.mistakes.slice(0,12);
+  const mistHtml=`<div class="sec"><h2>Recent mistakes</h2><p class="sub">Your last ${ml.length||''} wrong answers with the method.</p>${ml.length?`<div class="res-list">${ml.map(mistakeCard).join('')}</div>`:'<div class="empty">None yet.</div>'}</div>`;
+  const backup = window.claude ? '' : `<div class="sec"><h2>Backup</h2><p class="sub">Progress lives on this device. Export a backup file now and then, or to move to another device.</p>
+    <div class="row"><button class="ghost" id="exportBtn">Export progress</button><label class="ghost" for="importFile" style="cursor:pointer">Import backup</label><input type="file" id="importFile" accept="application/json,.json" hidden></div><div class="hint" id="importMsg"></div></div>`;
+  const reset=`<div class="sec"><div class="row" id="resetRow"><button class="ghost danger" id="resetBtn">Erase all progress</button></div></div>`;
+  el.innerHTML = tiles + recHtml + heat + trend + table + tagHtml + mistHtml + backup + reset;
+  const ex=$('#exportBtn'); if(ex) ex.onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(P)],{type:'application/json'})); a.download=`gmat-mental-math-${todayKey()}.json`; document.body.appendChild(a); a.click(); a.remove(); };
+  const im=$('#importFile'); if(im) im.onchange=async()=>{ const f=im.files[0]; if(!f) return; try{ const d=JSON.parse(await f.text()); if(!d||typeof d.days!=='object'||typeof d.cats!=='object') throw 0; P=normalize(d); save(); renderStatic(); $('#importMsg').textContent='Backup imported.'; }catch(e){ $('#importMsg').textContent='That file is not a GMAT Mental Math backup.'; } };
+  const dr=$('#drillRecs'); if(dr) dr.onclick=()=>{ showTab('train'); startSession(recs.map(r=>r.id), settings.lvl, 'q20'); };
+  $('#resetBtn').onclick=()=>{ $('#resetRow').innerHTML=`<span>Erase streak, history and analytics for good?</span><button class="ghost danger" id="resetYes">Yes, erase</button><button class="ghost" id="resetNo">Cancel</button>`;
+    $('#resetYes').onclick=()=>{ P=empty(); save(); renderStatic(); }; $('#resetNo').onclick=()=>renderStats(); };
+}
+
+/* ---------- tabs & boot ---------- */
+function showTab(which){
+  $('#tabTrain').setAttribute('aria-selected', which==='train'); $('#tabStats').setAttribute('aria-selected', which==='stats');
+  $('#viewTrain').hidden = which!=='train'; $('#viewStats').hidden = which!=='stats';
+  if(which==='stats') renderStats();
+}
+$('#tabTrain').onclick=()=>showTab('train');
+$('#tabStats').onclick=()=>showTab('stats');
+function renderStatic(){ renderStreak(); if(!$('#setup').hidden) renderSetup(); if(!$('#viewStats').hidden) renderStats(); }
+renderStatic(); renderSetup();
+if(location.hash==='#progress') showTab('stats');
+initStore();
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
